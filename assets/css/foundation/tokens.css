@@ -1,0 +1,139 @@
+/*
+ * Work Management operational design system.
+ * Foundation tokens are product-wide and theme independent. Semantic color
+ * values live in themes.css; components should consume role tokens rather
+ * than hard-coded palette values.
+ */
+:root {
+  /* Typography — compact enterprise hierarchy for long operational sessions. */
+  --wm-font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --wm-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --wm-text-2xs: 0.6875rem; /* 11 */
+  --wm-text-xs: 0.75rem;    /* 12 */
+  --wm-text-sm: 0.8125rem;  /* 13 */
+  --wm-text-md: 0.875rem;   /* 14 */
+  --wm-text-lg: 1rem;       /* 16 */
+  --wm-text-xl: 1.125rem;   /* 18 */
+  --wm-text-2xl: 1.375rem;  /* 22 */
+  --wm-text-3xl: 1.75rem;   /* 28 */
+  --wm-text-4xl: 2.25rem;   /* 36 */
+  --wm-font-size-050: 10px;
+  --wm-font-size-100: 11px;
+  --wm-font-size-150: 12px;
+  --wm-font-size-200: 12px;
+  --wm-font-size-250: 13px;
+  --wm-font-size-300: 13px;
+  --wm-font-size-400: 14px;
+  --wm-font-size-500: 16px;
+  --wm-font-size-600: 18px;
+  --wm-font-size-700: 22px;
+  --wm-font-size-800: 28px;
+  --wm-font-size-900: 36px;
+  --wm-font-size-1000: 44px;
+  --wm-font-weight-regular: 400;
+  --wm-font-weight-medium: 520;
+  --wm-font-weight-semibold: 620;
+  --wm-font-weight-bold: 700;
+  --wm-font-weight-heavy: 760;
+  --wm-line-height-tight: 1.2;
+  --wm-line-height-normal: 1.45;
+  --wm-line-height-relaxed: 1.6;
+  --wm-letter-spacing-label: .055em;
+
+  /* Spacing — 4px base with a controlled half-step for dense controls. */
+  --wm-space-0: 0;
+  --wm-space-025: 2px;
+  --wm-space-050: 4px;
+  --wm-space-075: 6px;
+  --wm-space-100: 8px;
+  --wm-space-125: 10px;
+  --wm-space-150: 12px;
+  --wm-space-200: 16px;
+  --wm-space-250: 20px;
+  --wm-space-300: 24px;
+  --wm-space-350: 28px;
+  --wm-space-400: 32px;
+  --wm-space-500: 40px;
+  --wm-space-600: 48px;
+  --wm-space-800: 64px;
+
+  /* Sizing and layout. */
+  --wm-control-sm: 32px;
+  --wm-control-md: 36px;
+  --wm-control-lg: 42px;
+  --wm-hit-target: 40px;
+  --wm-sidebar-width: 248px;
+  --wm-sidebar-collapsed: 72px;
+  --wm-topbar-min-height: 92px;
+  --wm-content-max: 1480px;
+  --wm-reading-max: 760px;
+  --wm-panel-narrow: 420px;
+  --wm-panel-medium: 560px;
+  --wm-panel-wide: 760px;
+  --wm-table-row-compact: 38px;
+  --wm-table-row-default: 44px;
+
+  /* Radius — restrained; data surfaces remain squarer than marketing UI. */
+  --wm-radius-050: 4px;
+  --wm-radius-100: 6px;
+  --wm-radius-150: 8px;
+  --wm-radius-200: 10px;
+  --wm-radius-250: 12px;
+  --wm-radius-300: 14px;
+  --wm-radius-400: 18px;
+  --wm-radius-500: 24px;
+  --wm-radius-round: 999px;
+
+  --wm-border-width: 1px;
+  --wm-focus-width: 2px;
+
+  /* Elevation — only overlays and raised surfaces receive significant shadow. */
+  --wm-shadow-xs: 0 1px 2px rgba(15, 23, 42, .05);
+  --wm-shadow-sm: 0 4px 14px rgba(15, 23, 42, .07);
+  --wm-shadow-md: 0 12px 32px rgba(15, 23, 42, .10);
+  --wm-shadow-lg: 0 22px 56px rgba(15, 23, 42, .13);
+  --wm-shadow-overlay: 0 28px 80px rgba(2, 6, 23, .24);
+
+  /* Motion — low-amplitude, state-oriented and reduced-motion friendly. */
+  --wm-motion-instant: 80ms;
+  --wm-motion-fast: 130ms;
+  --wm-motion-normal: 190ms;
+  --wm-motion-slow: 280ms;
+  --wm-motion-emphasized: 360ms;
+  --wm-motion-ease: cubic-bezier(.2, .72, .22, 1);
+  --wm-motion-ease-out: cubic-bezier(.16, 1, .3, 1);
+  --wm-motion-ease-in: cubic-bezier(.4, 0, 1, 1);
+  --wm-motion-duration-micro: 80ms;
+  --wm-motion-duration-fast: 130ms;
+  --wm-motion-duration-standard: 190ms;
+  --wm-motion-duration-deliberate: 280ms;
+  --wm-motion-duration-view: 320ms;
+  --wm-motion-duration-expressive: 420ms;
+  --wm-motion-ease-standard: cubic-bezier(.2, .72, .22, 1);
+  --wm-motion-ease-enter: cubic-bezier(.16, 1, .3, 1);
+  --wm-motion-ease-exit: cubic-bezier(.4, 0, 1, 1);
+  --wm-motion-ease-emphasized: cubic-bezier(.2, .86, .24, 1);
+  --wm-motion-distance-xs: 2px;
+  --wm-motion-distance-sm: 4px;
+  --wm-motion-distance-md: 8px;
+  --wm-motion-distance-lg: 12px;
+  --wm-motion-blur: 4px;
+  --wm-motion-press-scale: .985;
+  --wm-motion-hover-lift: -1px;
+  --wm-motion-stagger-step: 20ms;
+  --wm-motion-stagger-max: 120ms;
+
+  /* Breakpoint documentation tokens (CSS custom properties are descriptive). */
+  --wm-breakpoint-narrow: 640px;
+  --wm-breakpoint-tablet: 840px;
+  --wm-breakpoint-laptop: 1120px;
+  --wm-breakpoint-wide: 1440px;
+
+  --wm-z-base: 0;
+  --wm-z-sticky: 20;
+  --wm-z-popover: 300;
+  --wm-z-drawer: 700;
+  --wm-z-modal: 900;
+  --wm-z-command: 1000;
+  --wm-z-toast: 1200;
+}

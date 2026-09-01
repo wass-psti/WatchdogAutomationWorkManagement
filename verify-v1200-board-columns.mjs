@@ -1,0 +1,33 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=(p)=>fs.readFileSync(p,'utf8');
+const sql=read('supabase/migrations/v1.20.0-board-columns.sql');
+const schema=read('supabase/schema.sql');
+const ui=read('assets/js/boards-ui.ts');
+const schemaUi=read('assets/js/features/boards/board-schema.ts');
+const columnWorkflows=read('assets/js/features/boards/controllers/column-workflows.ts');
+const tableView=read('assets/js/features/boards/views/table-view.ts');
+const workspaceView=read('assets/js/features/boards/views/board-workspace-view.ts');
+const service=read('assets/js/features/boards/data/board-repository.ts');
+const css=read('assets/css/app.css');
+
+for (const token of ['work_board_columns','work_board_item_values','wm_add_board_column','wm_update_board_column','wm_move_board_column','wm_delete_board_column','wm_set_board_cell']) assert.ok(sql.includes(token),`Missing ${token}`);
+assert.ok(sql.includes("data_type in ('text','long_text','number','status','dropdown','date','people','checkbox','url','email','timeline')"),'Supported column types constraint missing');
+assert.ok(sql.includes('work_board_columns_name_ci_idx'),'Case-insensitive column-name uniqueness missing');
+assert.ok(sql.includes("if c.system_key is not null then raise exception 'Core board columns cannot be deleted"),'Core-column delete protection missing');
+assert.ok(sql.includes("if c.system_key='title' then p_visible:=true"),'Item column visibility protection missing');
+assert.ok(sql.includes('Existing values use options that would be removed'),'Choice option data-integrity safeguard missing');
+assert.ok(sql.includes("'columns',coalesce" ) && sql.includes("'values',coalesce"),'Board payload does not include schema and values');
+assert.ok(sql.includes('perform public.work_board_seed_default_columns(bid,caller)'),'New-board default schema seed missing');
+assert.ok(sql.includes('join public.work_board_columns nc on nc.board_id=new_id and nc.column_key=sc.column_key'),'Board duplication does not map custom values by stable column key');
+assert.ok(schema.includes('-- Work Management v1.20.0 — flexible board columns and typed item values'),'New-install schema missing v1.20 migration');
+
+for (const fn of ['addColumn','updateColumn','moveColumn','deleteColumn','setCell']) assert.ok(service.includes(`async ${fn}`),`Board service missing ${fn}`);
+for (const token of ['COLUMN_TYPES','defaultColumnName']) assert.ok(schemaUi.includes(token),`Board schema module missing ${token}`);
+for (const token of ['openPicker','openEditor','openManager','openCell','data-add-column','data-edit-column','data-edit-cell']) assert.ok(columnWorkflows.includes(token)||ui.includes(token)||tableView.includes(token),`Board column architecture missing ${token}`);
+assert.ok(workspaceView.includes("Search items and field values"),'Cross-column search hint missing');
+assert.ok(columnWorkflows.includes('Built-in field'),'Core-column identity missing from management UI');
+assert.ok(columnWorkflows.includes('One unique option per line'),'Choice configuration help missing');
+assert.ok(ui.includes('Assignee must be a board member')===false,'UI should not duplicate server-only validation text');
+for (const token of ['.board-data-table','.column-picker','.column-manager-list','.board-cell-button']) assert.ok(css.includes(token),`Column UI style missing ${token}`);
+console.log('v1.20.0 flexible board columns verification: PASS');

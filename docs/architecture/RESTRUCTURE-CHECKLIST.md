@@ -1,0 +1,46 @@
+# Restructure Verification Checklist
+
+- [x] Preserve application routes.
+- [x] Preserve module IDs, versions, and entry routes.
+- [x] Preserve module storage keys/prefixes.
+- [x] Preserve Supabase backend configuration shape.
+- [x] Preserve authentication/session/RBAC behavior.
+- [x] Preserve backup/recovery boundaries.
+- [x] Preserve Work Board RPC and database contracts.
+- [x] Preserve existing migrations and consolidated schema.
+- [x] Preserve item workspace private file security.
+- [x] Preserve module iframe isolation.
+- [x] Consolidate common module boot/auth/error handling.
+- [x] Introduce explicit feature boundaries.
+- [x] Introduce central application manifest.
+- [x] Introduce central service-worker asset manifest.
+- [x] Introduce design-token/theme foundation.
+- [x] Introduce SDK-style runtime service/event contract without telemetry.
+- [x] Keep existing public compatibility files while migration proceeds.
+- [x] Keep the application zero-build/zero-install for static hosting.
+- [x] Run legacy regression suites after restructuring.
+- [x] Add architecture-specific verification.
+- [x] Centralize route authentication/dispatch policy.
+- [x] Add manifest-backed runtime feature registration.
+- [x] Add feature activate/deactivate lifecycle boundaries.
+- [x] Centralize long-lived browser lifecycle listeners.
+- [x] Separate Work Boards service construction from its view.
+- [x] Extract Work Boards schema metadata/default naming.
+- [x] Extract Work Boards view-state initialization/reset.
+- [x] Invalidate pending Board async work when leaving the feature.
+- [x] Extract account/user-management controllers from the shell.
+- [x] Extract Board List and Item Workspace presentation modules.
+- [x] Extract Table/Kanban presentation modules.
+- [x] Extract Board column/dialog workflow controllers.
+- [x] Extract authentication form rendering/state from the shell.
+- [x] Extract Settings controller from the shell.
+
+- [x] Extract Home/application launcher presentation/state.
+- [x] Extract command-palette controller and command registry.
+- [x] Extract Board group/item/member/activity workflow controllers.
+- [x] Further separate Board header/cell presentation where beneficial.
+- [x] Further separate low-level Board drag/drop and item-workspace interaction bindings when active development requires it.
+- [x] Introduce stable domain-configuration boundaries for TimeTracker, FuelTrack+, and TradeLink after shell/Boards boundaries are stable.
+- [x] Add browser-level integration verification for route, modal, iframe, and Board lifecycles.
+- [x] Perform targeted accessibility/performance review and fix observed issues without speculative instrumentation.
+

@@ -1,0 +1,113 @@
+name: Deploy Work Management v1.43.2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Verify and build v1.43.2
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_BASE_PATH: ./
+      VITE_BUILD_SOURCEMAP: "false"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Require production public backend configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VITE_SUPABASE_URL}" || {
+            echo "::error::Repository variable VITE_SUPABASE_URL is not configured."
+            exit 1
+          }
+          test -n "${VITE_SUPABASE_PUBLISHABLE_KEY}" || {
+            echo "::error::Repository variable VITE_SUPABASE_PUBLISHABLE_KEY is not configured."
+            exit 1
+          }
+          case "${VITE_SUPABASE_URL}" in
+            https://*.supabase.co) ;;
+            *)
+              echo "::error::VITE_SUPABASE_URL does not look like the intended HTTPS Supabase project URL."
+              exit 1
+              ;;
+          esac
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run complete v1.43.2 release gate
+        run: npm run release:check
+
+      - name: Verify production artifact before upload
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f dist/index.html
+          test -f dist/service-worker.js
+          test -f dist/manifest.webmanifest
+          test -f dist/config/runtime-assets.js
+          test -f dist/assets/js/runtime/module-bootstrap.js
+          test -f dist/assets/js/runtime/motion-orchestrator.js
+          test -f dist/assets/js/runtime/motion-design.js
+
+          if grep -qE 'src/main\.tsx?|%BASE_URL%|127\.0\.0\.1|localhost' dist/index.html; then
+            echo "::error::dist/index.html still contains a source-only or development reference."
+            exit 1
+          fi
+
+          grep -qE '\./build/index-[^"]+\.js' dist/index.html
+          grep -qE '\./build/index-[^"]+\.css' dist/index.html
+          grep -q 'work-management-v1.43.2' dist/service-worker.js
+
+          if find dist -type f -name '*.map' -print -quit | grep -q .; then
+            echo "::error::Production source maps are present even though VITE_BUILD_SOURCEMAP=false."
+            exit 1
+          fi
+
+          echo "Production deployment artifact sanity check: PASS"
+          echo "Only ./dist will be uploaded to GitHub Pages."
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload production dist only
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+
+  deploy:
+    name: Deploy v1.43.2 to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

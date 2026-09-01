@@ -1,0 +1,16 @@
+import fs from 'node:fs'; import assert from 'node:assert/strict';
+const core=fs.readFileSync('assets/js/features/boards/data/board-repository.ts','utf8');
+const ui=fs.readFileSync('assets/js/boards-ui.ts','utf8');
+const dialogs=fs.readFileSync('assets/js/features/boards/controllers/dialog-controller.ts','utf8');
+const css=fs.readFileSync('assets/css/app.css','utf8');
+const sql=fs.readFileSync('supabase/migrations/v1.21.5-board-backend-compatibility.sql','utf8');
+assert.ok(/code\s*={2,3}\s*['\"]PGRST202['\"]/.test(core),'PGRST202 detection missing');
+assert.ok(core.includes('await wait(700)'),'schema-cache retry missing');
+assert.ok(core.includes('never fall back to the legacy wm_create_board RPC'),'legacy unsafe fallback safeguard missing');
+assert.ok(core.includes('WM_BOARD_BACKEND_OUTDATED'),'deployment mismatch error missing');
+assert.ok(dialogs.includes('data-modal-error'),'persistent modal error region missing');
+assert.ok(css.includes('.wm-modal-error'),'modal error styling missing');
+assert.ok(sql.includes('wm_create_board_configured'),'configured create migration missing');
+assert.ok(sql.includes("notify pgrst, 'reload schema'"),'PostgREST schema reload missing');
+assert.ok(sql.includes('wm_board_backend_capabilities'),'backend capability marker missing');
+console.log('v1.21.5 board backend reliability verification passed');

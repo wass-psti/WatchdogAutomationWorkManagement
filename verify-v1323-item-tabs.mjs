@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+const app = fs.readFileSync('assets/css/app.css','utf8');
+const motion = fs.readFileSync('assets/css/motion-design.css','utf8');
+const manifest = fs.readFileSync('config/application-manifest.ts','utf8');
+const platform = fs.readFileSync('assets/js/core/platform.ts','utf8');
+const sw = fs.readFileSync('service-worker.js','utf8');
+const must = (ok,msg) => { if(!ok) throw new Error(msg); };
+must(manifest.includes("version: '1.43.2'"), 'manifest version');
+must(platform.includes("PLATFORM_VERSION = '1.43.2'"), 'platform version');
+must(sw.includes('work-management-v1.43.2'), 'cache version');
+must(app.includes('.item-panel-tabs.wm-motion-nav button.active::after'), 'legacy underline guard');
+must(app.includes('content:none!important'), 'legacy underline suppressed');
+must(motion.includes('bottom:3px'), 'indicator is separated from divider');
+must(motion.includes('calc(var(--wm-ind-w,0px) - 20px)'), 'indicator is inset');
+must(motion.includes('height:2px'), 'indicator thickness');
+must(app.includes('.item-panel-tabs.wm-motion-nav button:focus-visible'), 'focus state retained');
+console.log('v1.32.4 Item Workspace tab refinement verification: PASS');

@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "allowJs": false,
+    "noEmit": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@platform/*": [
+        "src/platform/*"
+      ],
+      "@boards/*": [
+        "src/features/boards/*"
+      ]
+    },
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/types/**/*.ts",
+    "assets/js/**/*.ts",
+    "assets/js/**/*.d.ts",
+    "config/**/*.ts",
+    "config/**/*.d.ts",
+    "src/**/*.tsx",
+    "assets/js/**/*.tsx"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "apps"
+  ]
+}

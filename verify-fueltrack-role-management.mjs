@@ -1,0 +1,10 @@
+import fs from 'node:fs'; const read=(p)=>fs.readFileSync(p,'utf8'); const fail=(m)=>{throw new Error(m)};
+const runtime=read('apps/fueltrack-plus/app.v3.17.0-wm6.js'); const domain=read('apps/fueltrack-plus/domain-config.js'); const html=read('apps/fueltrack-plus/runtime.html'); const registry=read('config/modules.ts');
+for(const marker of ['data-route="roles"','<span class="nav-icon">♙</span><span>Roles</span>']) if(!html.includes(marker)) fail(`Roles navigation missing ${marker}`);
+if(!domain.includes('const DEFAULT_ROLE = ROLES.USER')) fail('domain role policy missing default User role');
+for(const marker of ['AUTHENTICATED_ROLE','cloudRoleDirectory','function renderRoles','Module-local role state cannot override it','Read-only directory']) if(!runtime.includes(marker)) fail(`cloud role-management marker missing ${marker}`);
+if(!html.includes('./domain-config.js')) fail('FuelTrack domain role policy must load before runtime bootstrap');
+if(runtime.includes('const LOCAL_WORKSPACE_ROLE')) fail('obsolete local workspace role remains');
+if(runtime.includes('function addManagedUser')||runtime.includes('function deleteManagedUser')) fail('module-local user administration must not return');
+if(!registry.includes("route: './apps/fueltrack-plus/runtime.html'")) fail('FuelTrack route mismatch');
+console.log('fueltrack-role-management-verification: PASS');

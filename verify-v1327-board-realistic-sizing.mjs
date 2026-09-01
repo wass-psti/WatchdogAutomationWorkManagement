@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const css=fs.readFileSync('assets/css/app.css','utf8');
+const sw=fs.readFileSync('service-worker.js','utf8');
+const platform=fs.readFileSync('assets/js/core/platform.ts','utf8');
+const manifest=fs.readFileSync('config/application-manifest.ts','utf8');
+const must=(needle,label)=>assert.ok(css.includes(needle),label);
+must('v1.32.7 — Board realistic desktop accessibility sizing pass','release sizing block missing');
+must('--board-body-size:14px','comfortable board body token missing');
+must('--board-row-height:68px','larger table row target missing');
+must('.item-panel-head h2{margin:5px 0 10px;font-size:30px','item panel title scale missing');
+must('.item-update-composer textarea{min-height:150px','composer workspace scale missing');
+must('.item-panel-tabs button,.item-panel-tabs.wm-motion-nav button{min-height:52px','workspace tab targets missing');
+must('.board-item-panel{width:min(760px,52vw);min-width:620px}','primary workspace width missing');
+assert.ok(sw.includes("work-management-v1.43.2"),'cache release mismatch');
+assert.ok(platform.includes("PLATFORM_VERSION = '1.43.2'"),'platform release mismatch');
+assert.ok(manifest.includes("version: '1.43.2'"),'manifest release mismatch');
+console.log('v1.32.7 Board realistic sizing verification: PASS');

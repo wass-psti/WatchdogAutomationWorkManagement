@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const ui=readFileSync('assets/js/boards-ui.ts','utf8');
+const boardListView=readFileSync('assets/js/features/boards/views/board-list-view.ts','utf8');
+const schema=readFileSync('assets/js/features/boards/board-schema.ts','utf8');
+const workflows=readFileSync('assets/js/features/boards/controllers/column-workflows.ts','utf8');
+const css=readFileSync('assets/css/app.css','utf8');
+const platform=readFileSync('assets/js/core/platform.ts','utf8');
+const sw=readFileSync('service-worker.js','utf8');
+const readme=readFileSync('README.md','utf8');
+
+const version=platform.match(/PLATFORM_VERSION = '([^']+)'/)?.[1];
+const cacheVersion=sw.match(/work-management-v([0-9.]+)/)?.[1];
+const atLeast=(value, minimum)=>String(value||'').split('.').map(Number).reduce((acc,n,i)=>acc||Math.sign((n||0)-(minimum.split('.').map(Number)[i]||0)),0)>=0;
+assert.ok(atLeast(version,'1.21.3'),'platform version predates v1.21.3');
+assert.ok(atLeast(cacheVersion,'1.21.3'),'service-worker cache predates v1.21.3');
+assert.ok(ui.includes('value="New board"'),'new board default name missing');
+assert.ok(workflows.includes('defaultColumnName(dataType') && schema.includes('const base = `New ${meta.label}`'),'typed new-column default name missing');
+assert.ok(boardListView.includes('role="link" tabindex="0"'),'board card keyboard navigation semantics missing');
+assert.match(ui, /const card = target\.closest<HTMLElement>\('\.board-card\[data-board-id\]'\)/, 'board card click target missing');
+assert.ok(ui.includes("const interactive = target.closest('button,summary,details,a,input,select,textarea,label')"), 'board secondary-action isolation missing');
+assert.match(ui, /if \(card && !interactive\)[\s\S]*?const boardId = card\.dataset\.boardId;[\s\S]*?if \(boardId\) navigate\(`boards\/\$\{boardId\}`\);/, 'direct board navigation missing');
+assert.ok(ui.includes("if (event.key !== 'Enter' && event.key !== ' ') return;"), 'board card keyboard activation missing');
+assert.ok(css.includes('cursor:pointer'),'board card affordance missing');
+assert.ok(css.includes('.board-card:focus-visible'),'board card focus-visible style missing');
+assert.ok(readme.includes('## v1.21.3 — board creation defaults and direct board opening'),'release notes missing');
+console.log('v1.21.3 board direct-open/default-name verification: PASS');

@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=(p)=>fs.readFileSync(p,'utf8');
+const app=read('apps/fueltrack-plus/app.v3.17.0-wm6.js');
+const css=read('apps/fueltrack-plus/styles.v3.17.0-wm6.css');
+const runtime=read('apps/fueltrack-plus/runtime.html');
+assert.ok(runtime.includes('app.v3.17.0-wm6.js') && runtime.includes('styles.v3.17.0-wm6.css'),'FuelTrack runtime must use v1.17.9 assets');
+assert.ok(app.includes('const alreadyMounted = state.route === route && els.content.dataset.route === route'),'same-route navigation must be inert after the route is mounted');
+assert.ok(app.includes('els.content.dataset.route = state.route'),'rendered route marker must be maintained');
+assert.ok(app.includes('handleActivityResultClick') && app.includes('handleActivityLoadMore'),'Activity interactions must use stable delegated handlers');
+assert.ok(!app.includes('function bindActivityResultActions()'),'per-result listener rebinding must be removed');
+assert.ok(app.includes('refreshActivityStream({announce:true})'),'manual refresh must share the authoritative refresh pipeline');
+assert.ok(app.includes('activityActorToken') && app.includes('actorEmail'),'actor filtering must disambiguate identities');
+assert.ok(app.includes('No activity recorded yet') && app.includes('No activity matches these filters'),'empty and filtered-empty states must be distinct');
+assert.ok(app.includes('aria-controls="activityStream"'),'Activity filters must expose their controlled region');
+assert.ok(css.includes('.route-enter { animation:none; transform:none; }'),'FuelTrack route container must not translate or animate globally');
+assert.ok(css.includes('.activity-load-more [aria-busy="true"]'),'Load-older operation must expose a busy state');
+console.log('v1.17.9 Activity workspace verification: PASS');

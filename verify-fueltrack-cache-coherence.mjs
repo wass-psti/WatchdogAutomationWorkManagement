@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+const read=(p)=>fs.readFileSync(p,'utf8'); const fail=(m)=>{throw new Error(m)};
+const registry=read('config/modules.ts'); const runtime=read('apps/fueltrack-plus/runtime.html'); const sw=read('service-worker.js'); const js=read('apps/fueltrack-plus/app.v3.17.0-wm6.js'); const domain=read('apps/fueltrack-plus/domain-config.js');
+if(!registry.includes("route: './apps/fueltrack-plus/runtime.html'")) fail('FuelTrack registry route mismatch');
+for(const marker of ['./app.v3.17.0-wm6.js','./styles.v3.17.0-wm6.css','data-route="roles"']) if(!runtime.includes(marker)) fail(`runtime missing ${marker}`);
+for(const marker of ['"route.roles"','"roles.view"']) if(!domain.includes(marker)) fail(`domain RBAC policy missing ${marker}`);
+for(const marker of ['cloudRoleDirectory','AUTHENTICATED_ROLE']) if(!js.includes(marker)) fail(`runtime RBAC enforcement missing ${marker}`);
+if(!runtime.includes('./domain-config.js')) fail('FuelTrack domain policy must load before runtime bootstrap');
+if(!sw.includes("work-management-v1.43.2")) fail('service worker release mismatch');
+if(!sw.includes("url.pathname.includes('/apps/')")) fail('active cloud module network policy missing');
+if(sw.includes("'./apps/fueltrack-plus/app.v3.17.0-wm6.js'")) fail('active module runtime must not be offline-precached');
+if(!sw.includes("cache: 'no-store'")) fail('module runtime fetch must bypass stale HTTP cache');
+console.log('fueltrack-cache-coherence-verification: PASS');

@@ -1,0 +1,102 @@
+/*
+ * Cross-module presentation bridge.
+ * Loaded after each embedded application's local stylesheet so the products
+ * share hierarchy, density, focus treatment and surface language without
+ * moving domain behavior into CSS or rewriting their application runtimes.
+ */
+html,body { font-family:var(--wm-font-family)!important; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; }
+body { min-width:0; max-width:100%; }
+
+/* TimeTracker semantic bridge. */
+body[data-wm-surface="time-tracker"] {
+  --paper:var(--wm-color-canvas);
+  --surface:var(--wm-color-surface-primary);
+  --surface-soft:var(--wm-color-surface-secondary);
+  --surface-muted:var(--wm-color-surface-tertiary);
+  --surface-tint:var(--wm-color-surface-secondary);
+  --line:var(--wm-color-border-primary);
+  --ink:var(--wm-color-text-primary);
+  --muted:var(--wm-color-text-secondary);
+  background:var(--wm-color-canvas)!important;
+  color:var(--wm-color-text-primary)!important;
+  font-size:var(--wm-text-md);
+}
+body[data-wm-surface="time-tracker"] :is(button,input,select,textarea) { min-height:var(--wm-control-md); border-radius:var(--wm-radius-150); }
+body[data-wm-surface="time-tracker"] :is(.panel,.card,.clock-card,.report-card,.calendar-card,.overview-panel,.role-card,.ot-card,.evidence-card) {
+  border-radius:var(--wm-radius-250)!important;
+  border-color:var(--wm-color-border-primary)!important;
+  box-shadow:none!important;
+}
+body[data-wm-surface="time-tracker"] :is(.nav-tabs,.overview-record-tabs) { gap:var(--wm-space-050); }
+body[data-wm-surface="time-tracker"] :is(.nav-tabs button,.overview-record-tabs button) { min-height:var(--wm-hit-target); }
+body[data-wm-surface="time-tracker"] table :is(th,td) { line-height:1.4; }
+
+/* FuelTrack+ keeps its teal operational accent but adopts common geometry. */
+body[data-wm-surface="fueltrack"] {
+  --radius:var(--wm-radius-250);
+  --radius-sm:var(--wm-radius-150);
+  font-size:var(--wm-text-md);
+}
+body[data-wm-surface="fueltrack"] .app-frame { min-height:100dvh; }
+body[data-wm-surface="fueltrack"] .sidebar { width:var(--wm-sidebar-width); }
+body[data-wm-surface="fueltrack"] .nav-item { min-height:var(--wm-hit-target); border-radius:var(--wm-radius-150)!important; }
+body[data-wm-surface="fueltrack"] :is(.button,.icon-button,input,select,textarea) { min-height:var(--wm-control-md); border-radius:var(--wm-radius-150); }
+body[data-wm-surface="fueltrack"] :is(.panel,.metric-card,.request-card,.analytics-panel,.queue-card,.lightfuel-card,.form-card,.activity-card,.section-card) {
+  border-radius:var(--wm-radius-250)!important;
+  box-shadow:none!important;
+}
+body[data-wm-surface="fueltrack"] :is(.data-table,.table-wrap) { border-radius:var(--wm-radius-200); }
+body[data-wm-surface="fueltrack"] .data-table th { height:var(--wm-table-row-compact); font-size:var(--wm-text-2xs); letter-spacing:var(--wm-letter-spacing-label); }
+body[data-wm-surface="fueltrack"] .data-table td { min-height:var(--wm-table-row-default); font-size:var(--wm-text-xs); }
+
+/* TradeLink document workflows use the same operational surface hierarchy. */
+body[data-wm-surface="tradelink"] {
+  --bg:var(--wm-color-canvas);
+  --surface:var(--wm-color-surface-primary);
+  --surface-subtle:var(--wm-color-surface-secondary);
+  --surface-muted:var(--wm-color-surface-tertiary);
+  --line:var(--wm-color-border-primary);
+  --ink:var(--wm-color-text-primary);
+  --text-muted:var(--wm-color-text-secondary);
+  background:var(--wm-color-canvas)!important;
+  color:var(--wm-color-text-primary)!important;
+  font-size:var(--wm-text-md);
+}
+body[data-wm-surface="tradelink"] :is(.button,.toolbar button,.modal-actions button,input,select,textarea) {
+  min-height:var(--wm-control-md);
+  border-radius:var(--wm-radius-150)!important;
+}
+body[data-wm-surface="tradelink"] :is(.card,.panel,.section-card,.template-card,.manual-card,.snapshot-card,.create-workspace,.documents-filter-panel,.documents-table-wrap) {
+  border-radius:var(--wm-radius-250)!important;
+  box-shadow:none!important;
+}
+body[data-wm-surface="tradelink"] :is(.nav-tabs,.create-type-tabs,.recovery-tabs) button { min-height:var(--wm-hit-target); }
+
+/* Shared overlay behavior and focus appearance across iframe applications. */
+body[data-wm-surface] :is(.modal,.dialog,.context-menu,.popover,.modern-select-menu,.company-panel,.item-panel) {
+  max-width:calc(100vw - 16px);
+  max-height:calc(100dvh - 16px);
+  box-shadow:var(--wm-shadow-overlay);
+}
+body[data-wm-surface] :is(.context-menu,.popover,.modern-select-menu) { overflow:auto; overscroll-behavior:contain; }
+body[data-wm-surface] :is(button,[role="button"],a,input,select,textarea,[tabindex]):focus-visible {
+  outline:var(--wm-focus-width) solid var(--wm-color-focus)!important;
+  outline-offset:2px!important;
+}
+
+@media (max-width:840px) {
+  body[data-wm-surface="fueltrack"] .sidebar { width:min(86vw,var(--wm-sidebar-width)); }
+}
+
+@media (max-width:640px) {
+  body[data-wm-surface] :is(.wm-button,.button,.primary-btn,.secondary-btn,.danger-btn) { max-width:100%; white-space:normal; overflow-wrap:anywhere; }
+  body[data-wm-surface] :is(.page-actions,.form-actions,.modal-actions,.toolbar-group) { min-width:0; flex-wrap:wrap; }
+}
+
+@media (pointer:coarse) {
+  body[data-wm-surface] :is(button,[role="button"],input,select,textarea) { min-height:44px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body[data-wm-surface] *,body[data-wm-surface] *::before,body[data-wm-surface] *::after { scroll-behavior:auto!important; }
+}

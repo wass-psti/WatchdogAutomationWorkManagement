@@ -1,0 +1,85 @@
+import type { ModuleId } from '../src/types/identifiers.ts';
+import type { WorkManagementModuleDefinition } from '../src/types/modules.ts';
+
+const moduleDefinitions = {
+  'time-tracker': {
+    id: 'time-tracker',
+    name: 'TimeTracker',
+    eyebrow: 'Attendance & Workforce',
+    description: 'Attendance, overtime, leave, reporting, calendar, roles, GPS evidence, and workforce operations.',
+    route: './apps/time-tracker/index.html',
+    version: '2.0.0',
+    status: 'active',
+    accent: 'orange',
+    icon: 'clock',
+    capabilities: ['Attendance', 'Overtime', 'Leave', 'Reports', 'Calendar', 'Roles'],
+    storageFormat: 'json',
+    cloudStateKeys: [
+      'timetracker.attendance.v1', 'timetracker.attendance.v1.backup', 'timetracker.ui.v1',
+      'timetracker.audit.v1', 'timetracker.audit.v1.backup',
+      'timetracker.ot.v1', 'timetracker.ot.v1.backup',
+      'timetracker.ot.activity.v1', 'timetracker.ot.activity.v1.backup',
+      'timetracker.auto-gps-cache.v1',
+    ],
+    userStateKeys: ['timetracker.ui.v1', 'timetracker.auto-gps-cache.v1'],
+    cloudStatePrefixes: [],
+  },
+  'fueltrack-plus': {
+    id: 'fueltrack-plus',
+    name: 'FuelTrack+',
+    eyebrow: 'Fuel Request Operations',
+    description: 'Fuel requests, approvals, analytics, refueling completion, LightFuels operations, activity, per-user role management, and cloud operational reporting.',
+    route: './apps/fueltrack-plus/runtime.html',
+    version: '3.17.0',
+    status: 'active',
+    accent: 'blue',
+    icon: 'fuel',
+    capabilities: ['Fuel Requests', 'Approvals', 'Analytics', 'LightFuels', 'Activity', 'Roles', 'PDF Reports'],
+    storageFormat: 'json',
+    cloudStateKeys: [
+      'fueltrackplus.requests.v3',
+      'fueltrackplus.activity.v3',
+      'fueltrackplus.preferences.v3',
+      'fueltrackplus.inventory.v3',
+    ],
+    userStateKeys: ['fueltrackplus.preferences.v3'],
+    cloudStatePrefixes: [],
+  },
+  tradelink: {
+    id: 'tradelink',
+    name: 'TradeLink',
+    eyebrow: 'Commercial Documents & Approvals',
+    description: 'Quotations, purchase orders, electronic sales invoices, delivery and payment documents, approval workflows, company templates, recovery, and audit operations.',
+    route: './apps/tradelink/runtime.html',
+    version: '1.42.0',
+    status: 'active',
+    accent: 'teal',
+    icon: 'trade',
+    capabilities: ['Quotations', 'Purchase Orders', 'Electronic SI', 'Approvals', 'Documents', 'Recovery', 'Audit'],
+    storageFormat: 'json',
+    rawStorageKeys: [
+      'tradelink_vendor_logo_watchdog-opc', 'tradelink_vendor_logo_watchdog-sales', 'tradelink_vendor_logo_plc-systems',
+      'tradelink_vendor_qr_watchdog-opc', 'tradelink_vendor_qr_watchdog-sales', 'tradelink_vendor_qr_plc-systems',
+    ],
+    rawStoragePatterns: {
+      'tradelink_vendor_logo_watchdog-opc': '^data:image/(png|jpe?g|webp|gif);base64,',
+      'tradelink_vendor_logo_watchdog-sales': '^data:image/(png|jpe?g|webp|gif);base64,',
+      'tradelink_vendor_logo_plc-systems': '^data:image/(png|jpe?g|webp|gif);base64,',
+      'tradelink_vendor_qr_watchdog-opc': '^data:image/(png|jpe?g|webp|gif);base64,',
+      'tradelink_vendor_qr_watchdog-sales': '^data:image/(png|jpe?g|webp|gif);base64,',
+      'tradelink_vendor_qr_plc-systems': '^data:image/(png|jpe?g|webp|gif);base64,',
+    },
+    cloudStateKeys: [
+      'tradelink_state_v1',
+      'tradelink_state_backup_v1',
+      'tradelink_ui_v1', 'tradelink_draft_v1',
+      'tradelink_vendor_logo_watchdog-opc', 'tradelink_vendor_logo_watchdog-sales', 'tradelink_vendor_logo_plc-systems',
+      'tradelink_vendor_qr_watchdog-opc', 'tradelink_vendor_qr_watchdog-sales', 'tradelink_vendor_qr_plc-systems',
+    ],
+    userStateKeys: ['tradelink_ui_v1', 'tradelink_draft_v1'],
+    cloudStatePrefixes: [],
+  },
+} as const satisfies Readonly<Record<ModuleId, WorkManagementModuleDefinition>>;
+
+export const modules: readonly WorkManagementModuleDefinition[] = Object.freeze(Object.values(moduleDefinitions));
+export const moduleDefinitionsById: Readonly<Record<ModuleId, WorkManagementModuleDefinition>> = Object.freeze(moduleDefinitions);

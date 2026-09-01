@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app=fs.readFileSync('assets/js/app.ts','utf8');
+const router=fs.readFileSync('assets/js/core/router.ts','utf8');
+const css=fs.readFileSync('assets/css/app.css','utf8');
+const fuel=fs.readFileSync('apps/fueltrack-plus/app.v3.17.0-wm6.js','utf8');
+assert.ok(router.includes('if (location.hash === target) return false'),'same-route navigation must be a no-op');
+assert.ok(!router.includes('dispatchEvent(new HashChangeEvent'),'router must not synthesize same-route hashchange');
+assert.ok(app.includes("function renderWorkspace(content: string, active: string = 'home'"),'persistent workspace renderer missing');
+assert.ok(app.includes('data-workspace-root'),'persistent workspace mount missing');
+assert.ok(app.includes("const routeKey = location.hash || '#/'") && app.includes('const routeChanged = workspaceRouteKey !== routeKey'),'route-scoped motion guard missing');
+assert.ok(app.includes('if (routeChanged && motionMode) queueEntranceMotion(motionMode)'),'state-only updates must not replay route entrance motion');
+assert.ok(css.includes('.content-motion-enter{animation:none!important}'),'route container animation must be disabled');
+assert.ok(fuel.includes('function updateActivityResults({ refreshActors = false } = {})'),'incremental Activity rendering missing');
+assert.ok(fuel.includes('if (document.getElementById("activityStream")) updateActivityResults({refreshActors:true})'),'Activity cloud updates must not remount full page');
+assert.ok(!fuel.includes('if(state.route==="activity") renderActivity({preserveScroll:true});'),'legacy full Activity remount still present');
+console.log('v1.17.6 persistent-shell/activity stability verification: PASS');

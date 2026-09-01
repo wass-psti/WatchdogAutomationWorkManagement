@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const tt=fs.readFileSync('apps/time-tracker/app.js','utf8');
+const tl=fs.readFileSync('apps/tradelink/app.js','utf8');
+const platform=fs.readFileSync('assets/js/core/platform.ts','utf8');
+const sw=fs.readFileSync('service-worker.js','utf8');
+assert.ok(tt.includes('The authenticated cloud primary is the only runtime authority'),'TimeTracker must not auto-promote attendance recovery state');
+assert.ok(!tt.includes('globalThis.WMModuleStore.setItem(STORAGE_KEY, JSON.stringify(backup))'),'TimeTracker backup must not be silently promoted to primary');
+assert.ok(tt.includes('await refreshAuthoritativeAttendance({ renderUi: false });'),'Clock workflow must revalidate authoritative cloud attendance');
+assert.ok(tt.includes("commitAuthoritativeAttendance('clock-in'"),'Clock In must defer session authority to the server transaction');
+assert.ok(tt.includes("commitAuthoritativeAttendance('clock-out'"),'Clock Out must defer session authority to the server transaction');
+assert.ok(!tt.includes('acquireAttendanceActionLock'),'Expiring attendance action leases must not remain in the clock workflow');
+assert.ok(tl.includes('The authenticated cloud primary is the runtime authority'),'TradeLink must not silently restore rolling backup');
+assert.ok(!tl.includes('if(backup){ globalThis.WMModuleStore.setItem(STORAGE_KEY,JSON.stringify(backup))'),'TradeLink rolling backup must be explicit recovery only');
+assert.ok(platform.includes("PLATFORM_VERSION = '1.43.2'"),'Platform version mismatch');
+assert.ok(sw.includes('work-management-v1.43.2'),'Service worker version mismatch');
+console.log('v1.17.3-attendance-authority-verification: PASS');

@@ -1,0 +1,32 @@
+{
+  "name": "work-management-app",
+  "version": "1.43.2",
+  "private": true,
+  "type": "module",
+  "description": "Work Management modular operations platform.",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "node scripts/clean.mjs",
+    "verify": "NODE_OPTIONS=\"--experimental-strip-types --disable-warning=ExperimentalWarning\" bash verify-project.sh",
+    "verify:vite": "node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1360-vite-migration.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs",
+    "verify:preview": "node scripts/verify-vite-server.mjs preview",
+    "check": "npm run typecheck && npm run verify:types && npm run verify:vite && npm run verify:hardening && npm run verify:ui && npm run verify",
+    "release:check": "npm run typecheck && npm run verify:types && npm run verify:vite && npm run verify:hardening && npm run verify:ui && npm run verify:dev && npm run build && npm run verify:dist && npm run verify:preview && npm run verify",
+    "verify:dev": "node scripts/verify-vite-server.mjs dev",
+    "typecheck": "tsc --noEmit",
+    "verify:types": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/verify-typescript-foundation.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1380-typescript-runtime.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1390-typescript-orchestration.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1400-cloud-module-boundary.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1400-feature-runtime.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1410-nonvisual-runtime.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1420-ui-typescript.mjs",
+    "verify:hardening": "node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1430-production-hardening.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1431-board-compatibility.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1432-embedded-runtime-production.mjs",
+    "verify:ui": "node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1432-ui-foundation-phase1.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1432-ui-components-phase2.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1432-ui-deep-migration-phase3.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-v1432-ui-final-quality.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-timetracker-v2-pass1.mjs && node --experimental-strip-types --disable-warning=ExperimentalWarning verify-timetracker-v2-pass2.mjs"
+  },
+  "devDependencies": {
+    "vite": "8.2.2",
+    "typescript": "5.8.3"
+  }
+}

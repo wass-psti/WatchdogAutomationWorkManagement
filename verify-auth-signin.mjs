@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const app = fs.readFileSync(new URL('./assets/js/app.ts', import.meta.url), 'utf8');
+const authFeature = fs.readFileSync(new URL('./assets/js/features/auth/index.ts', import.meta.url), 'utf8');
+const auth = fs.readFileSync(new URL('./assets/js/core/auth.ts', import.meta.url), 'utf8');
+const sw = fs.readFileSync(new URL('./service-worker.js', import.meta.url), 'utf8');
+const runtimeAssets = fs.readFileSync(new URL('./config/runtime-assets.js', import.meta.url), 'utf8');
+assert.ok(authFeature.includes('state.busy = false;') && authFeature.includes('rerenderAuthForm'), 'failed-login busy state must clear before auth feature rerender');
+assert.ok(authFeature.includes('data-resend-confirmation'), 'login recovery must expose resend confirmation action');
+assert.ok(authFeature.includes('authService.isEmailNotConfirmedError(error)'), 'email_not_confirmed must be detected explicitly');
+assert.ok(auth.includes("/auth/v1/resend?redirect_to="), 'Supabase resend endpoint must be integrated');
+assert.ok(auth.includes("/auth/v1/verify"), 'token_hash verification endpoint must be integrated');
+assert.ok(auth.includes("hash.get('access_token')"), 'implicit confirmation callback must remain supported');
+assert.ok(auth.includes("query.get('token_hash')"), 'token_hash confirmation callback must be supported');
+assert.ok(sw.includes("work-management-v1.43.2"), 'service worker cache version must be current');
+assert.ok(sw.includes("url.pathname.includes('/build/')") && runtimeAssets.includes("'./assets/js/core/auth.ts'"), 'auth runtime must remain in the source manifest and production shell bundles must use the Vite build-asset cache path');
+console.log('Authentication sign-in/confirmation regression checks passed.');

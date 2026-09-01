@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><body><main id="moduleFixture">Module fixture</main>
+<script>
+  const parentOrigin = location.origin === 'null' ? '*' : location.origin;
+  window.addEventListener('message', (event) => {
+    if (location.origin !== 'null' && event.origin !== location.origin) return;
+    if (event.data?.type === 'wm:identity-context' && event.data?.moduleId === 'time-tracker') {
+      document.body.dataset.identity = event.data?.user?.id || 'received';
+      parent.postMessage({ type:'wm:host:ready', detail:{ name:'Fixture', moduleId:'time-tracker' } }, parentOrigin);
+    }
+    if (event.data?.type === 'test:emit-error') {
+      parent.postMessage({ type:'wm:host:error', detail:{ name:'Fixture', moduleId:'time-tracker', message:'fixture error' } }, parentOrigin);
+    }
+  });
+  parent.postMessage({ type:'wm:identity:request', moduleId:'time-tracker' }, parentOrigin);
+</script></body></html>

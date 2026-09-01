@@ -1,0 +1,407 @@
+{
+  "name": "FuelTrack+ v3",
+  "version": "3.17.0",
+  "architecture": "authenticated cloud application",
+  "baseline": "Work Management authenticated module runtime",
+  "modules": [
+    "Dashboard",
+    "Analytics",
+    "All Requests",
+    "New Fuel Request",
+    "Approvals",
+    "LightFuels",
+    "Activity",
+    "Roles"
+  ],
+  "dataPolicy": "No seeded operational data; dashboard and analytics derive from persisted application records only.",
+  "analytics": {
+    "requestCountBased": true,
+    "removedRequestDimensions": [
+      "fuelType",
+      "quantity",
+      "estimatedCost",
+      "unitPrice"
+    ],
+    "filters": [
+      "department",
+      "status",
+      "location"
+    ],
+    "breakdowns": [
+      "refuelType",
+      "department",
+      "location",
+      "status"
+    ],
+    "runtimeRepair": true,
+    "rootCause": "missing presentation helpers after v3.11 count-based migration",
+    "restoredHelpers": [
+      "analyticsFilterSelect",
+      "analyticsPeriodLabel",
+      "funnelRow",
+      "analyticsBreakdownPanel",
+      "analyticsLoadingState"
+    ],
+    "containerLocationFilterAligned": true
+  },
+  "newFuelRequest": {
+    "vehicleDirectoryRecords": 35,
+    "containerDirectory": [
+      "1 Container",
+      "2 Container",
+      "3 Container",
+      "4 Container",
+      "5 Container",
+      "6 Container",
+      "7 Container",
+      "8 Container",
+      "9 Container",
+      "10 Container"
+    ],
+    "typographyAccessibilityReview": true,
+    "containerOwnerSource": "VEHICLE_DIRECTORY.vehicleOwner",
+    "containerOwnerControl": "select",
+    "fuelRequirementSection": false,
+    "schemaVersion": 6,
+    "newRecordsContainFuelTypeOrQuantity": false,
+    "containerRefillDeliveryRoute": false,
+    "containerRouteFieldsPersisted": false,
+    "vehicleTripRoutePreserved": true
+  },
+  "allRequests": {
+    "workbenchSummary": true,
+    "quickLifecycleFilters": true,
+    "filters": [
+      "search",
+      "status",
+      "department",
+      "fuelType",
+      "refuelType",
+      "priority",
+      "location"
+    ],
+    "sortModes": [
+      "newest",
+      "oldest",
+      "updated",
+      "quantity-desc",
+      "priority"
+    ],
+    "pageSizes": [
+      10,
+      20,
+      50
+    ],
+    "contextualActions": true,
+    "copyRequestId": true,
+    "filteredExport": true,
+    "deleteRequest": {
+      "enabled": true,
+      "confirmationRequired": true,
+      "persistent": true,
+      "activityHistoryPreserved": true,
+      "paginationResync": true
+    }
+  },
+  "approvals": {
+    "explicitReviewStage": true,
+    "decisionNotes": {
+      "approval": "optional",
+      "rejection": "required"
+    },
+    "queueSearch": true,
+    "queueFilters": [
+      "stage",
+      "refuelType",
+      "priority"
+    ],
+    "sortModes": [
+      "oldest",
+      "priority",
+      "newest",
+      "updated"
+    ],
+    "workloadSummary": true,
+    "agingVisibility": true,
+    "filteredExport": true,
+    "refreshFromPersistence": true,
+    "persistenceRollbackOnTransitionFailure": true,
+    "decisionQueueSummaryField": "purpose",
+    "requestDetailHiddenFields": [
+      "fuelType",
+      "estimatedValue"
+    ],
+    "containerRoutePresentation": false
+  },
+  "lightFuels": {
+    "requestFuelTypeDependency": false,
+    "requestQuantityDependency": false,
+    "inventoryFuelTypeRetained": true,
+    "inventoryQuantityRetained": true,
+    "quantityBasedIssuance": false,
+    "fulfillmentTransition": "Approved -> Completed",
+    "inventoryMutationOnRequestFulfillment": false,
+    "inventorySearch": true,
+    "filters": [
+      "fuelType",
+      "location",
+      "health"
+    ],
+    "inventoryExport": true,
+    "refreshFromPersistence": true,
+    "fulfillmentAction": "Mark as Refueling Done"
+  },
+  "activity": {
+    "reportingComponents": false,
+    "search": true,
+    "filters": [
+      "type",
+      "actor",
+      "period"
+    ],
+    "sortModes": [
+      "newest",
+      "oldest"
+    ],
+    "dateGrouping": true,
+    "eventDetailDialog": true,
+    "requestDrillThrough": true,
+    "copyEvent": true,
+    "filteredExport": true,
+    "incrementalLoading": 30,
+    "refreshFromPersistence": true,
+    "linkageFilter": true,
+    "escapeClearsSearch": true,
+    "metricsAdded": false
+  },
+  "dashboard": {
+    "renderFailureRootCause": "stale timelineItem dependency after Activity workspace refactor",
+    "recentActivityRenderer": "dashboardActivityItem",
+    "schema6QuantitySafe": true,
+    "requestDrillThroughFromActivity": true,
+    "defensiveActionBindings": true,
+    "currentRequestCompletenessFields": [
+      "asset",
+      "purpose",
+      "route"
+    ]
+  },
+  "accessibilityScale": {
+    "applicationWide": true,
+    "modules": [
+      "dashboard",
+      "analytics",
+      "allRequests",
+      "newFuelRequest",
+      "approvals",
+      "lightFuels",
+      "activity",
+      "roles"
+    ],
+    "mobileFormControlMinimumPx": 16,
+    "expandedViewportUsage": true,
+    "responsiveOverflowSafeguards": true
+  },
+  "requestDetail": {
+    "quantityVisible": false,
+    "vehicleFields": [
+      "refuelType",
+      "requesterOwner",
+      "plateNumber",
+      "odometer",
+      "origin",
+      "destination",
+      "distance",
+      "created",
+      "lastUpdated",
+      "purpose"
+    ],
+    "containerFields": [
+      "refuelType",
+      "requesterOwner",
+      "container",
+      "containerType",
+      "created",
+      "lastUpdated",
+      "purpose"
+    ]
+  },
+  "requestModel": {
+    "fuelType": false,
+    "requestedQuantity": false,
+    "historicalFieldsPreserved": true
+  },
+  "refuelingCompletion": {
+    "enabled": true,
+    "sourceStatus": "Approved",
+    "targetStatus": "Completed",
+    "requiredFields": [
+      "amount",
+      "invoiceNumber",
+      "fuelQuantityLiters"
+    ],
+    "optionalFields": [
+      "receiptPhoto"
+    ],
+    "directCompletedTransition": false,
+    "allRequestsViewReadOnly": true,
+    "inventoryMutation": false,
+    "receiptCompression": true
+  },
+  "exports": {
+    "format": "pdf",
+    "csvEnabled": false,
+    "localGeneration": true,
+    "externalDependencies": false,
+    "template": "FuelTrack+ branded tabular report",
+    "pagination": true,
+    "pageNumbers": true,
+    "metadataBlock": true,
+    "longTextWrapping": true,
+    "dynamicColumnWidths": true,
+    "modules": [
+      "dashboard",
+      "analytics",
+      "allRequests",
+      "approvals",
+      "lightFuels",
+      "activity"
+    ]
+  },
+  "primaryInformationHierarchy": {
+    "metrics": [
+      "totalSpent",
+      "fuelVolume",
+      "requests",
+      "avgPerVehicle"
+    ],
+    "spendSource": "refuelingDetails.amount on Completed requests",
+    "volumeSource": "refuelingDetails.fuelQuantityLiters on Completed requests",
+    "avgVehicleDefinition": "completed vehicle refueling liters / distinct vehicle assets",
+    "dashboard": true,
+    "analytics": true
+  },
+  "autoRefresh": {
+    "enabled": true,
+    "foregroundIntervalMs": 15000,
+    "minRefreshGapMs": 2500,
+    "singleCoordinator": true,
+    "deduplicateUnchangedStorage": true,
+    "manualRefreshPreserved": true,
+    "pauseWhenDocumentHidden": true,
+    "refreshOnForegroundWhenStale": true,
+    "crossTabStorageSynchronization": true,
+    "deferDuringOpenDialogs": true,
+    "deferDuringFocusedInputs": true,
+    "protectNewRequestDraftInteraction": true,
+    "resumeAfterInteraction": true,
+    "routeAware": true,
+    "activityMetricsAdded": false
+  },
+  "rbac": {
+    "defaultRole": "User",
+    "roles": {
+      "Admin": {
+        "routes": [
+          "Dashboard",
+          "Analytics",
+          "All Requests",
+          "New Fuel Request",
+          "Approvals",
+          "LightFuels",
+          "Activity",
+          "Roles"
+        ],
+        "permissions": [
+          "create requests",
+          "view all requests",
+          "delete requests",
+          "export requests",
+          "view/export analytics",
+          "start/decide/export approvals",
+          "complete refueling",
+          "export inventory",
+          "view/export activity",
+          "view role management",
+          "manage per-user roles"
+        ]
+      },
+      "Pump Attendant": {
+        "routes": [
+          "Dashboard",
+          "All Requests",
+          "LightFuels"
+        ],
+        "permissions": [
+          "view all requests",
+          "complete refueling"
+        ],
+        "restrictions": [
+          "no request creation",
+          "no request deletion",
+          "no exports",
+          "no approvals",
+          "no analytics",
+          "no activity"
+        ]
+      },
+      "User": {
+        "routes": [
+          "Dashboard",
+          "All Requests",
+          "New Fuel Request"
+        ],
+        "permissions": [
+          "create requests",
+          "view own requests"
+        ],
+        "restrictions": [
+          "no analytics",
+          "no approvals",
+          "no LightFuels",
+          "no Activity",
+          "no deletion",
+          "no exports"
+        ]
+      }
+    },
+    "enforcement": [
+      "route guard",
+      "navigation visibility",
+      "data scoping",
+      "action-handler authorization",
+      "export authorization",
+      "request ownership",
+      "Activity Admin-only guard",
+      "Role Management Admin-only guard"
+    ],
+    "productionNote": "Client-side RBAC in this static local app is not a security boundary; production deployments should source the role from authenticated server-side identity claims and enforce authorization server-side.",
+    "activityAdminOnly": true,
+    "exportsAdminOnly": true,
+    "localWorkspaceActiveRole": "Admin",
+    "localWorkspaceOverride": true,
+    "roleManagement": {
+      "enabled": true,
+      "route": "Roles",
+      "adminOnly": true,
+      "perUserPersistence": true,
+      "storageKey": "fueltrackplus.userroles.v3",
+      "roles": [
+        "Admin",
+        "Pump Attendant",
+        "User"
+      ],
+      "defaultNewUserRole": "User",
+      "safeguards": [
+        "active admin protected",
+        "last admin protected",
+        "duplicate users blocked"
+      ]
+    }
+  },
+  "environment": {
+    "name": "Cloud Workspace",
+    "activeRole": "Admin",
+    "forceAdminRole": false
+  }
+}

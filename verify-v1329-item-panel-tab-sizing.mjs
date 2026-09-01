@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app=fs.readFileSync('assets/css/app.css','utf8');
+const motion=fs.readFileSync('assets/css/motion-design.css','utf8');
+const view=fs.readFileSync('assets/js/features/boards/views/item-workspace-view.ts','utf8');
+const sw=fs.readFileSync('service-worker.js','utf8');
+const platform=fs.readFileSync('assets/js/core/platform.ts','utf8');
+assert.ok(!app.includes('.item-panel-tabs span{display:inline-grid'),'obsolete generic tab span badge selector removed');
+const finalMotion=motion.slice(motion.lastIndexOf('v1.32.10'));
+assert.match(finalMotion,/item-panel-tabs button > span[\s\S]*font-size:inherit/,'tab label span inherits button typography');
+assert.match(finalMotion,/min-height:86px/,'desktop tab rail is materially taller');
+assert.match(finalMotion,/min-height:76px/,'desktop tab targets are materially taller');
+assert.match(finalMotion,/font-size:18px/,'desktop tab labels are 18px');
+assert.match(finalMotion,/font-weight:820/,'desktop tab labels use strong weight');
+assert.match(finalMotion,/height:4px/,'active motion indicator is proportionate');
+assert.ok(view.includes('role="tab"')&&view.includes('aria-selected=')&&view.includes('aria-controls='),'tab accessibility semantics preserved');
+assert.ok(sw.includes('work-management-v1.43.2')&&platform.includes("PLATFORM_VERSION = '1.43.2'"),'release cache/version advanced');
+console.log('v1.33.0 item-panel tab sizing verification passed');

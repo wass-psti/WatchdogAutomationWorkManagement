@@ -1,0 +1,63 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=(p)=>fs.readFileSync(p,'utf8');
+const migration=read('supabase/migrations/v1.17.0-state-contract-and-activity.sql');
+const store=read('assets/js/core/module-cloud-store.ts');
+const bridge=read('assets/js/core/cloud-module-data.ts');
+const fuel=read('apps/fueltrack-plus/app.v3.17.0-wm6.js');
+const runtime=read('apps/fueltrack-plus/runtime.html');
+const moduleBootstrap=read('assets/js/runtime/module-bootstrap.ts');
+const time=read('apps/time-tracker/app.js');
+const backup=read('assets/js/core/backup.ts');
+
+for(const key of [
+  'timetracker.attendance.v1','timetracker.ui.v1','timetracker.auto-gps-lock.v1:',
+  'fueltrackplus.requests.v3','fueltrackplus.activity.v3','fueltrackplus.preferences.v3',
+  'tradelink_state_v1','tradelink_ui_v1','tradelink_vendor_logo_'
+]) assert.ok(migration.includes(`'${key}'`),`missing state policy for ${key}`);
+assert.ok(migration.includes('module_state_key_policies'),'server state-key policy registry missing');
+assert.ok(migration.includes("match_type in ('exact','prefix')"),'prefix policy support missing');
+assert.ok(!/p_state_key\s*~\s*'\^timetracker/.test(migration),'regex-only state key validation must not return');
+assert.ok(migration.includes('module_state_invariants_valid'),'server state invariants missing');
+assert.ok(migration.includes('active_duplicate_count=0'),'TimeTracker multiple-active-session guard missing');
+assert.ok(migration.includes('module_operation_locks'),'distributed operation-lock table missing');
+assert.ok(migration.includes('acquire_module_operation_lock'),'distributed lock acquisition RPC missing');
+assert.ok(migration.includes('release_module_operation_lock'),'distributed lock release RPC missing');
+assert.ok(migration.includes("where l.expires_at<=now()"),'operation locks must not be stolen before expiry');
+assert.ok(migration.includes('module_activity_events'),'append-only activity table missing');
+assert.ok(migration.includes('append_module_activity'),'activity append RPC missing');
+assert.ok(migration.includes('list_module_activity'),'activity list RPC missing');
+assert.ok(migration.includes('commit_fueltrack_requests_with_activity'),'atomic request/activity RPC missing');
+assert.ok(migration.includes('actor_user_id'),'server actor identity missing');
+assert.ok(migration.includes('occurred_at timestamptz not null default now()'),'server timestamp missing');
+assert.ok(migration.includes('on conflict(workspace_id,module_id,event_id) do nothing'),'activity idempotency guard missing');
+assert.ok(migration.includes("not (p_module_id='fueltrack-plus' and e.state_key='fueltrackplus.activity.v3')"),'legacy activity aggregate must be excluded from live state reads');
+assert.ok(store.includes('commitWithActivity'),'module store atomic commit API missing');
+assert.ok(store.includes('WMModuleActivity'),'module activity facade missing');
+assert.ok(store.includes('WMModuleLocks'),'module distributed lock facade missing');
+assert.ok(store.includes('loadOlderActivity'),'Activity server pagination missing');
+assert.ok(store.includes('get hasMore()'),'Activity pagination availability state missing');
+assert.ok(store.includes('WM_STATE_CONFLICT: This record changed in another session'),'conflict recovery UX missing');
+assert.ok(bridge.includes("case 'activity:list'"),'activity list bridge missing');
+assert.ok(bridge.includes("case 'commit:requests-activity'"),'atomic commit bridge missing');
+assert.ok(bridge.includes("case 'lock:acquire'"),'operation lock bridge missing');
+assert.ok(bridge.includes("case 'lock:release'"),'operation lock release bridge missing');
+assert.ok(runtime.includes('optionalActivityReady: true') && moduleBootstrap.includes('globalThis.WMModuleActivity?.ready()'),'FuelTrack activity hydration missing');
+assert.ok(moduleBootstrap.includes('WMModuleActivityBootError'),'FuelTrack Activity failure must not block core runtime startup');
+assert.ok(fuel.includes('commitRequestsWithActivity(newActivityEvent'),'FuelTrack workflow does not use atomic request/activity commits');
+assert.ok(!fuel.includes('state.activity=state.activity.slice(0,250)'),'destructive activity cap must be removed');
+assert.ok(fuel.includes('Append-only shared audit stream'),'Activity UI must communicate audit semantics');
+assert.ok(fuel.includes('persistActivityFilters()'),'Activity filters must persist per account');
+assert.ok(fuel.includes('updateActivityResults();') && !fuel.includes('rerenderSearch=(value,caret)=>'),'Activity search must preserve focus by avoiding full-page remounts');
+assert.ok(fuel.includes('activity-retry'),'Activity recovery action missing');
+assert.ok(fuel.includes('Load older events'),'Activity older-event workflow missing');
+assert.ok(fuel.includes('Activity stream is temporarily unavailable'),'Activity dedicated error state missing');
+assert.ok(time.includes('async function saveStateConfirmed()'),'TimeTracker confirmed attendance persistence missing');
+assert.ok(time.includes('await saveStateConfirmed();'),'TimeTracker critical attendance actions must await cloud persistence');
+assert.ok(time.includes('WMModuleLocks?.acquire?.(`auto-clockout:'),'TimeTracker auto-clockout must use distributed lock');
+assert.ok(time.includes('WMModuleLocks?.acquire?.(`auto-gps:'),'TimeTracker auto-GPS must use distributed lock');
+assert.ok(backup.includes('BACKUP_VERSION = 4'),'Workspace Backup v3 missing');
+assert.ok(backup.includes('list_module_activity'),'Activity backup export missing');
+assert.ok(backup.includes('wm_restore_workspace_backup_v4'),'Activity backup import missing');
+assert.ok(migration.includes('create or replace function public.import_fueltrack_activity_backup'),'Activity backup recovery RPC missing');
+console.log('v1.17 data integrity verification: PASS');

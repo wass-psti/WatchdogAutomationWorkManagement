@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const css=fs.readFileSync('assets/css/app.css','utf8');
+const platform=fs.readFileSync('assets/js/core/platform.ts','utf8');
+assert.ok(platform.includes("PLATFORM_VERSION = '1.43.2'"),'platform version mismatch');
+assert.ok(css.includes('--control-bg:'),'semantic control background token missing');
+assert.ok(css.includes('--control-hover-bg:'),'semantic control hover token missing');
+assert.ok(css.includes(':root[data-theme="dark"],.theme-dark'),'dark semantic token override missing');
+assert.ok(css.includes(':root[data-theme="light"]{color-scheme:light}'),'light native color-scheme missing');
+assert.ok(css.includes(':root[data-theme="dark"]{color-scheme:dark}'),'dark native color-scheme missing');
+assert.ok(css.includes('.module-card:hover .card-arrow'),'card-arrow hover contract missing');
+assert.ok(css.includes('background:var(--control-hover-bg)!important'),'card-arrow hover must use semantic token');
+assert.ok(!/\.module-card:hover \.card-arrow\{background:var\(--ink\);color:var\(--bg\)/.test(css),'legacy inverted card-arrow hover styling remains active');
+assert.ok(css.includes('.status.success{background:var(--success-bg);color:var(--success-fg);border-color:var(--success-border)}'),'status success theme contract missing');
+assert.ok(css.includes('.favorite-btn.selected{background:var(--favorite-bg);color:var(--favorite-fg);border-color:var(--favorite-border)}'),'favorite selected theme contract missing');
+assert.ok(platform.includes("root.style.colorScheme = resolved === 'system' ? 'normal' : resolved"),'applyTheme native color scheme sync missing');
+console.log('v1.17.9 theme-aware launcher controls verification: PASS');

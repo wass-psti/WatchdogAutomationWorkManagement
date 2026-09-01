@@ -1,0 +1,126 @@
+/* Product-wide semantic color roles. Keep hierarchy identical across themes. */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --wm-color-canvas: #f3f5f7;
+  --wm-color-canvas-subtle: #eef1f4;
+  --wm-color-surface-primary: #ffffff;
+  --wm-color-surface-secondary: #f8fafb;
+  --wm-color-surface-tertiary: #f1f4f6;
+  --wm-color-surface-elevated: #ffffff;
+  --wm-color-surface-selected: #fff4ee;
+  --wm-color-text-primary: #18202a;
+  --wm-color-text-secondary: #5e6a78;
+  --wm-color-text-tertiary: #7d8793;
+  --wm-color-text-inverse: #f8fafc;
+  --wm-color-border-primary: #d9dee5;
+  --wm-color-border-subtle: #e8ebef;
+  --wm-color-border-strong: #bcc5cf;
+  --wm-color-navigation: #141a22;
+  --wm-color-navigation-raised: #1c2430;
+  --wm-color-navigation-hover: #242d39;
+  --wm-color-navigation-text: #f3f6f9;
+  --wm-color-navigation-muted: #9ba7b5;
+  --wm-color-accent: #d85b2f;
+  --wm-color-accent-hover: #bf4d25;
+  --wm-color-accent-soft: #fff0e8;
+  --wm-color-accent-contrast: #ffffff;
+  --wm-color-positive: #147a4f;
+  --wm-color-positive-soft: #e9f7f0;
+  --wm-color-negative: #b23b36;
+  --wm-color-negative-soft: #fff0ef;
+  --wm-color-warning: #956015;
+  --wm-color-warning-soft: #fff6df;
+  --wm-color-info: #2f659b;
+  --wm-color-info-soft: #eef6fd;
+  --wm-color-focus: #3d7fc4;
+  --wm-color-overlay: rgba(15, 23, 42, .48);
+  --wm-color-row-hover: #f7f9fb;
+  --wm-color-row-selected: #fff7f2;
+  --wm-color-input: #ffffff;
+  --wm-color-input-disabled: #f0f2f4;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --wm-color-canvas: #11161d;
+  --wm-color-canvas-subtle: #0e1319;
+  --wm-color-surface-primary: #181e26;
+  --wm-color-surface-secondary: #1d242d;
+  --wm-color-surface-tertiary: #232b35;
+  --wm-color-surface-elevated: #202832;
+  --wm-color-surface-selected: #34261f;
+  --wm-color-text-primary: #eef2f6;
+  --wm-color-text-secondary: #b0bac6;
+  --wm-color-text-tertiary: #8693a2;
+  --wm-color-text-inverse: #11161d;
+  --wm-color-border-primary: #303946;
+  --wm-color-border-subtle: #252d37;
+  --wm-color-border-strong: #465362;
+  --wm-color-navigation: #0c1117;
+  --wm-color-navigation-raised: #151c24;
+  --wm-color-navigation-hover: #202936;
+  --wm-color-navigation-text: #f6f8fa;
+  --wm-color-navigation-muted: #97a3b2;
+  --wm-color-accent: #f18155;
+  --wm-color-accent-hover: #ff966f;
+  --wm-color-accent-soft: #3b281f;
+  --wm-color-accent-contrast: #161a20;
+  --wm-color-positive: #65c995;
+  --wm-color-positive-soft: #193328;
+  --wm-color-negative: #ef8b84;
+  --wm-color-negative-soft: #3c2323;
+  --wm-color-warning: #e5b367;
+  --wm-color-warning-soft: #3a2f1d;
+  --wm-color-info: #86b7e5;
+  --wm-color-info-soft: #1d3042;
+  --wm-color-focus: #83b8ec;
+  --wm-color-overlay: rgba(0, 0, 0, .64);
+  --wm-color-row-hover: #1d252f;
+  --wm-color-row-selected: #30251f;
+  --wm-color-input: #171d25;
+  --wm-color-input-disabled: #202730;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+    --wm-color-canvas: #11161d;
+    --wm-color-canvas-subtle: #0e1319;
+    --wm-color-surface-primary: #181e26;
+    --wm-color-surface-secondary: #1d242d;
+    --wm-color-surface-tertiary: #232b35;
+    --wm-color-surface-elevated: #202832;
+    --wm-color-surface-selected: #34261f;
+    --wm-color-text-primary: #eef2f6;
+    --wm-color-text-secondary: #b0bac6;
+    --wm-color-text-tertiary: #8693a2;
+    --wm-color-text-inverse: #11161d;
+    --wm-color-border-primary: #303946;
+    --wm-color-border-subtle: #252d37;
+    --wm-color-border-strong: #465362;
+    --wm-color-navigation: #0c1117;
+    --wm-color-navigation-raised: #151c24;
+    --wm-color-navigation-hover: #202936;
+    --wm-color-navigation-text: #f6f8fa;
+    --wm-color-navigation-muted: #97a3b2;
+    --wm-color-accent: #f18155;
+    --wm-color-accent-hover: #ff966f;
+    --wm-color-accent-soft: #3b281f;
+    --wm-color-accent-contrast: #161a20;
+    --wm-color-positive: #65c995;
+    --wm-color-positive-soft: #193328;
+    --wm-color-negative: #ef8b84;
+    --wm-color-negative-soft: #3c2323;
+    --wm-color-warning: #e5b367;
+    --wm-color-warning-soft: #3a2f1d;
+    --wm-color-info: #86b7e5;
+    --wm-color-info-soft: #1d3042;
+    --wm-color-focus: #83b8ec;
+    --wm-color-overlay: rgba(0, 0, 0, .64);
+    --wm-color-row-hover: #1d252f;
+    --wm-color-row-selected: #30251f;
+    --wm-color-input: #171d25;
+    --wm-color-input-disabled: #202730;
+  }
+}

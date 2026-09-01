@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const js=fs.readFileSync('assets/js/app.ts','utf8');
+const css=fs.readFileSync('assets/css/app.css','utf8');
+assert.ok(js.includes("const transitionUpdate: TransitionUpdate"),'transition coordinator missing');
+assert.ok(!js.includes('document.startViewTransition(update)'),'root View Transition must not drive shell rerenders');
+assert.ok(js.includes("app.querySelector<HTMLElement>('#main, .auth-panel')"),'entrance motion must target replaceable content only');
+assert.ok(!js.includes("app.classList.add('motion-enter')"),'application root must not receive entrance animation class');
+assert.ok(css.includes('.shell,.sidebar,.workspace,.topbar,.module-shell,.module-topbar,.module-stage{animation:none!important;transform:none!important;transition-property:none!important}'),'persistent structural motion guard missing');
+assert.ok(css.includes('html{overflow-y:scroll;overflow-x:hidden}'),'stable scrollbar reservation missing');
+assert.ok(css.includes('.module-stage iframe{transform:none!important;transition:opacity'),'iframe must not scale during readiness transition');
+assert.ok(css.includes('.content-motion-enter{animation:none!important}'),'route container itself must not animate');
+assert.ok(css.includes('.topbar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important'),'sticky shell compositing guard missing');
+console.log('v1.17.6-ui-stability: PASS');

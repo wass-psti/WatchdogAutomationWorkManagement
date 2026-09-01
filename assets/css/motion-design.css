@@ -1,0 +1,1908 @@
+/*
+ * Work Management Motion Design System — v1.30.0
+ * A shared, motion-first presentation layer for the shell and every embedded app.
+ * Loaded last so it can modernize presentation without changing business logic.
+ */
+
+:root {
+  --motion-ink: #0b1020;
+  --motion-ink-soft: #151c32;
+  --motion-canvas: #f4f6fb;
+  --motion-surface: rgba(255,255,255,.82);
+  --motion-surface-strong: rgba(255,255,255,.96);
+  --motion-border: rgba(21,31,55,.11);
+  --motion-border-strong: rgba(21,31,55,.18);
+  --motion-muted: #697386;
+  --motion-accent: #ff6a3d;
+  --motion-accent-2: #6c7cff;
+  --motion-cyan: #42c7e8;
+  --motion-positive: #23a66f;
+  --motion-negative: #d45757;
+  --motion-warning: #b97824;
+  --motion-radius-sm: 12px;
+  --motion-radius: 18px;
+  --motion-radius-lg: 26px;
+  --motion-radius-xl: 34px;
+  --motion-shadow-sm: 0 8px 24px rgba(31,42,68,.07);
+  --motion-shadow: 0 20px 55px rgba(31,42,68,.11);
+  --motion-shadow-lg: 0 36px 100px rgba(17,24,39,.20);
+  --motion-ease-out: var(--wm-motion-ease-enter, cubic-bezier(.16,1,.3,1));
+  --motion-ease-spring: var(--wm-motion-ease-emphasized, cubic-bezier(.2,.95,.2,1.08));
+  --motion-ease-smooth: var(--wm-motion-ease-standard, cubic-bezier(.22,.61,.36,1));
+  --motion-fast: var(--wm-motion-duration-fast, 140ms);
+  --motion-medium: var(--wm-motion-duration-standard, 220ms);
+  --motion-slow: var(--wm-motion-duration-view, 420ms);
+  --motion-x: 50vw;
+  --motion-y: 16vh;
+}
+
+:root[data-theme="dark"] {
+  --motion-ink: #eef3ff;
+  --motion-ink-soft: #d6def2;
+  --motion-canvas: #080d18;
+  --motion-surface: rgba(17,24,39,.78);
+  --motion-surface-strong: rgba(19,27,44,.96);
+  --motion-border: rgba(178,194,230,.12);
+  --motion-border-strong: rgba(178,194,230,.21);
+  --motion-muted: #909db5;
+  --motion-shadow-sm: 0 10px 30px rgba(0,0,0,.24);
+  --motion-shadow: 0 24px 70px rgba(0,0,0,.32);
+  --motion-shadow-lg: 0 40px 120px rgba(0,0,0,.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --motion-ink: #eef3ff;
+    --motion-ink-soft: #d6def2;
+    --motion-canvas: #080d18;
+    --motion-surface: rgba(17,24,39,.78);
+    --motion-surface-strong: rgba(19,27,44,.96);
+    --motion-border: rgba(178,194,230,.12);
+    --motion-border-strong: rgba(178,194,230,.21);
+    --motion-muted: #909db5;
+    --motion-shadow-sm: 0 10px 30px rgba(0,0,0,.24);
+    --motion-shadow: 0 24px 70px rgba(0,0,0,.32);
+    --motion-shadow-lg: 0 40px 120px rgba(0,0,0,.5);
+  }
+}
+
+/* ---------- Shared kinetic behavior ---------- */
+body[data-wm-surface] {
+  --wm-motion-accent: var(--motion-accent);
+  --wm-motion-accent-2: var(--motion-accent-2);
+  min-height: 100vh;
+  background-color: var(--motion-canvas);
+  background-image:
+    radial-gradient(circle at var(--motion-x) var(--motion-y), color-mix(in srgb,var(--wm-motion-accent) 9%,transparent) 0, transparent 23rem),
+    radial-gradient(circle at 92% 4%, color-mix(in srgb,var(--wm-motion-accent-2) 8%,transparent) 0, transparent 26rem),
+    linear-gradient(180deg, color-mix(in srgb,var(--motion-canvas) 94%,white), var(--motion-canvas));
+  background-attachment: fixed;
+}
+
+body[data-wm-surface] :where(button,a,[role="button"],input,select,textarea,summary) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body[data-wm-surface] :where(button,a,[role="button"],summary) {
+  transition:
+    transform var(--motion-fast) var(--motion-ease-spring),
+    box-shadow var(--motion-medium) var(--motion-ease-out),
+    background-color var(--motion-medium) var(--motion-ease-out),
+    border-color var(--motion-medium) var(--motion-ease-out),
+    color var(--motion-medium) var(--motion-ease-out),
+    opacity var(--motion-fast) ease;
+}
+
+body[data-wm-surface] :where(button,a,[role="button"],summary):active:not(:disabled) {
+  transform: translateY(1px) scale(.975);
+}
+
+body[data-wm-surface] :where(input,select,textarea) {
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-medium) var(--motion-ease-out),
+    background-color var(--motion-medium) ease,
+    transform var(--motion-fast) ease;
+}
+
+body[data-wm-surface] :where(input,select,textarea):focus {
+  transform: translateY(-1px);
+}
+
+body[data-wm-surface] :where(button,a,input,select,textarea,[role="button"],[tabindex]):focus-visible {
+  outline: 0 !important;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb,var(--wm-motion-accent) 38%,transparent),
+    0 0 0 5px color-mix(in srgb,var(--wm-motion-accent) 10%,transparent);
+}
+
+body[data-wm-surface] ::selection {
+  background: color-mix(in srgb,var(--wm-motion-accent) 24%,transparent);
+  color: inherit;
+}
+
+body[data-wm-surface] * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb,var(--wm-motion-accent-2) 28%,transparent) transparent;
+}
+body[data-wm-surface] *::-webkit-scrollbar { width: 9px; height: 9px; }
+body[data-wm-surface] *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb,var(--wm-motion-accent-2) 30%,transparent);
+  background-clip: padding-box;
+}
+
+.wm-motion-reveal {
+  opacity: 0;
+  transform: translate3d(0,14px,0) scale(.992);
+  filter: saturate(.88);
+  transition:
+    opacity var(--motion-slow) var(--motion-ease-out),
+    transform var(--motion-slow) var(--motion-ease-out),
+    filter var(--motion-slow) var(--motion-ease-out);
+  transition-delay: var(--wm-motion-delay,0ms);
+}
+.wm-motion-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0,0,0) scale(1);
+  filter: saturate(1);
+}
+
+.wm-motion-press {
+  animation: wmMotionPress 320ms var(--motion-ease-spring) both;
+}
+
+@keyframes wmMotionPress {
+  0% { transform: scale(1); }
+  36% { transform: scale(.965); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wmMotionFloat {
+  0%,100% { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(0,-12px,0) rotate(2deg); }
+}
+
+@keyframes wmMotionDrift {
+  0% { transform: translate3d(-3%,1%,0) scale(1); }
+  50% { transform: translate3d(4%,-3%,0) scale(1.08); }
+  100% { transform: translate3d(-3%,1%,0) scale(1); }
+}
+
+@keyframes wmMotionGlow {
+  0%,100% { opacity:.4; transform:scale(.96); }
+  50% { opacity:.8; transform:scale(1.08); }
+}
+
+@keyframes wmMotionSlideIn {
+  from { opacity:0; transform:translate3d(18px,0,0) scale(.985); }
+  to { opacity:1; transform:none; }
+}
+
+/* ================================================================
+   WORK MANAGEMENT SHELL
+   ================================================================ */
+body[data-wm-surface="shell"] {
+  --bg: var(--motion-canvas);
+  --surface: var(--motion-surface-strong);
+  --surface2: color-mix(in srgb,var(--motion-surface-strong) 82%,var(--motion-canvas));
+  --ink: var(--motion-ink);
+  --muted: var(--motion-muted);
+  --line: var(--motion-border);
+  --line2: color-mix(in srgb,var(--motion-border) 70%,transparent);
+  --nav: #090e1a;
+  --nav2: #111a2c;
+  --accent: var(--motion-accent);
+  --accent2: #ff8c62;
+  --success: var(--motion-positive);
+  --shadow: var(--motion-shadow);
+  --radius: var(--motion-radius-lg);
+}
+
+body[data-wm-surface="shell"] .shell {
+  grid-template-columns: 278px minmax(0,1fr);
+  gap: 0;
+}
+
+body[data-wm-surface="shell"] .sidebar {
+  inset: 14px auto 14px 14px;
+  width: 250px;
+  height: calc(100vh - 28px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(108,124,255,.18), transparent 18rem),
+    radial-gradient(circle at 85% 102%, rgba(255,106,61,.16), transparent 20rem),
+    linear-gradient(160deg,#090e1a,#10182a 66%,#111a29);
+  box-shadow: 0 24px 70px rgba(7,12,23,.28), inset 0 1px rgba(255,255,255,.07);
+  padding: 22px 16px;
+  overflow: hidden auto;
+}
+
+body[data-wm-surface="shell"] .sidebar::before {
+  content:"";
+  position:absolute;
+  inset:-30% -50% auto;
+  height:240px;
+  background:radial-gradient(circle,rgba(108,124,255,.18),transparent 66%);
+  pointer-events:none;
+  animation:wmMotionDrift 12s ease-in-out infinite;
+}
+
+body[data-wm-surface="shell"] .workspace { margin-left: 278px; }
+
+body[data-wm-surface="shell"] .brand {
+  position:relative;
+  padding: 5px 8px 26px;
+}
+body[data-wm-surface="shell"] .brand-mark {
+  width: 40px;
+  height: 40px;
+  gap: 4px;
+  transform: rotate(-4deg);
+  transition: transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="shell"] .brand:hover .brand-mark { transform: rotate(5deg) scale(1.05); }
+body[data-wm-surface="shell"] .brand-mark i {
+  border-radius: 10px;
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 1px rgba(255,255,255,.12);
+}
+body[data-wm-surface="shell"] .brand-mark i:first-child {
+  background: linear-gradient(135deg,var(--motion-accent),#ff9f75);
+  box-shadow: 0 8px 20px rgba(255,106,61,.28);
+}
+body[data-wm-surface="shell"] .brand-copy strong { font-size:17px; letter-spacing:-.025em; }
+body[data-wm-surface="shell"] .brand-copy small { color:#77849a; }
+
+body[data-wm-surface="shell"] .sidebar nav { gap: 7px; position:relative; z-index:1; }
+body[data-wm-surface="shell"] .nav-item {
+  position:relative;
+  overflow:hidden;
+  min-height:46px;
+  border-radius:14px;
+  color:#8997ad;
+  padding:11px 13px;
+}
+body[data-wm-surface="shell"] .nav-item::before {
+  content:"";
+  position:absolute;
+  left:0;
+  top:10px;
+  bottom:10px;
+  width:3px;
+  border-radius:999px;
+  background:linear-gradient(180deg,var(--motion-accent),var(--motion-accent-2));
+  transform:scaleY(0);
+  opacity:0;
+  transition:transform var(--motion-medium) var(--motion-ease-spring),opacity var(--motion-medium) ease;
+}
+body[data-wm-surface="shell"] .nav-item:hover {
+  background:rgba(255,255,255,.055);
+  color:#f2f5fb;
+  transform:translateX(3px);
+}
+body[data-wm-surface="shell"] .nav-item.active {
+  color:#fff;
+  border-color:rgba(255,255,255,.09);
+  background:linear-gradient(90deg,rgba(108,124,255,.16),rgba(255,255,255,.06));
+  box-shadow:inset 0 1px rgba(255,255,255,.05);
+}
+body[data-wm-surface="shell"] .nav-item.active::before { transform:scaleY(1); opacity:1; }
+body[data-wm-surface="shell"] .nav-item.active span { color:#d9e1ff; }
+body[data-wm-surface="shell"] .sidebar-foot { position:relative; z-index:1; }
+body[data-wm-surface="shell"] .health-dot,
+body[data-wm-surface="shell"] .activity-dot.live {
+  animation: wmMotionGlow 2.2s ease-in-out infinite;
+}
+
+body[data-wm-surface="shell"] .topbar {
+  top: 12px;
+  margin: 12px 18px 0;
+  padding: 20px 24px;
+  border:1px solid var(--motion-border);
+  border-radius:22px;
+  background:color-mix(in srgb,var(--motion-surface-strong) 78%,transparent);
+  box-shadow:var(--motion-shadow-sm), inset 0 1px rgba(255,255,255,.45);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+body[data-wm-surface="shell"] .topbar h1 { font-size:30px; letter-spacing:-.045em; }
+body[data-wm-surface="shell"] .top-eyebrow { color:var(--motion-accent-2); }
+body[data-wm-surface="shell"] .avatar {
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#111827,#293653);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(17,24,39,.16);
+}
+body[data-wm-surface="shell"] .account-pill,
+body[data-wm-surface="shell"] .connection-pill {
+  border-radius:14px;
+  background:var(--motion-surface-strong);
+  border-color:var(--motion-border);
+  box-shadow:var(--motion-shadow-sm);
+}
+
+body[data-wm-surface="shell"] .page {
+  padding:36px 36px 58px;
+  max-width:1640px;
+}
+
+body[data-wm-surface="shell"] .hero-panel {
+  min-height:340px;
+  border-radius:34px;
+  padding:46px 48px;
+  border:1px solid rgba(255,255,255,.09);
+  background:
+    radial-gradient(circle at 72% 18%,rgba(108,124,255,.23),transparent 28%),
+    radial-gradient(circle at 90% 85%,rgba(66,199,232,.12),transparent 24%),
+    linear-gradient(145deg,#0b1120,#131d32 62%,#15192a);
+  box-shadow:0 36px 90px rgba(9,14,25,.24), inset 0 1px rgba(255,255,255,.08);
+}
+body[data-wm-surface="shell"] .hero-panel::before {
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  left:46%;
+  bottom:-170px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:42%;
+  transform:rotate(25deg);
+  animation:wmMotionFloat 8s ease-in-out infinite;
+}
+body[data-wm-surface="shell"] .hero-panel::after {
+  width:420px;
+  height:420px;
+  right:-90px;
+  top:-230px;
+  background:radial-gradient(circle,rgba(255,106,61,.32),transparent 65%);
+  animation:wmMotionGlow 6s ease-in-out infinite;
+}
+body[data-wm-surface="shell"] .hero-kicker { color:#93a7d8; }
+body[data-wm-surface="shell"] .hero-panel h2 { font-size:clamp(40px,4.2vw,62px); max-width:760px; }
+body[data-wm-surface="shell"] .hero-panel h2 em {
+  font-family:inherit;
+  font-style:normal;
+  font-weight:650;
+  color:#ff8d67;
+  background:linear-gradient(90deg,#ff8d67,#ffbe8e);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+body[data-wm-surface="shell"] .hero-panel p { font-size:13px; color:#9ba9bd; }
+body[data-wm-surface="shell"] .hero-stats {
+  border-radius:22px;
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.1);
+  box-shadow:inset 0 1px rgba(255,255,255,.05);
+}
+body[data-wm-surface="shell"] .hero-stats > div {
+  transition:background-color var(--motion-medium) ease,transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="shell"] .hero-stats > div:hover { background:rgba(255,255,255,.05); transform:translateY(-3px); }
+
+body[data-wm-surface="shell"] .section-title h3 { font-size:24px; }
+body[data-wm-surface="shell"] .module-grid { gap:18px; }
+body[data-wm-surface="shell"] .module-card,
+body[data-wm-surface="shell"] .settings-card,
+body[data-wm-surface="shell"] .user-directory-card,
+body[data-wm-surface="shell"] .architecture-strip,
+body[data-wm-surface="shell"] .board-card {
+  border-color:var(--motion-border);
+  background:var(--motion-surface);
+  box-shadow:var(--motion-shadow-sm), inset 0 1px rgba(255,255,255,.38);
+  backdrop-filter:blur(18px) saturate(125%);
+  -webkit-backdrop-filter:blur(18px) saturate(125%);
+}
+body[data-wm-surface="shell"] .module-card {
+  min-height:350px;
+  border-radius:26px;
+  padding:23px;
+  isolation:isolate;
+}
+body[data-wm-surface="shell"] .module-card::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--motion-accent-2) 9%,transparent),transparent 45%,color-mix(in srgb,var(--motion-accent) 7%,transparent));
+  opacity:0;
+  transition:opacity var(--motion-medium) ease;
+  pointer-events:none;
+  z-index:-1;
+}
+body[data-wm-surface="shell"] .module-card:hover,
+body[data-wm-surface="shell"] .module-card:focus-visible {
+  transform:translateY(-7px) scale(1.008);
+  border-color:color-mix(in srgb,var(--motion-accent-2) 28%,var(--motion-border));
+  box-shadow:0 26px 62px rgba(31,42,68,.15);
+}
+body[data-wm-surface="shell"] .module-card:hover::before,
+body[data-wm-surface="shell"] .module-card:focus-visible::before { opacity:1; }
+body[data-wm-surface="shell"] .module-icon {
+  width:50px;
+  height:50px;
+  border-radius:16px;
+  background:linear-gradient(145deg,#fff0e8,#ffe2d4);
+  color:#d65026;
+  box-shadow:0 10px 24px rgba(255,106,61,.13);
+}
+:root[data-theme="dark"] body[data-wm-surface="shell"] .module-icon {
+  background:linear-gradient(145deg,rgba(255,106,61,.18),rgba(108,124,255,.11));
+  color:#ff9b76;
+}
+body[data-wm-surface="shell"] .capabilities span {
+  border-radius:999px;
+  padding:6px 9px;
+  background:color-mix(in srgb,var(--motion-surface-strong) 74%,transparent);
+}
+body[data-wm-surface="shell"] .module-card-foot button,
+body[data-wm-surface="shell"] .icon-btn,
+body[data-wm-surface="shell"] .back-btn,
+body[data-wm-surface="shell"] .module-action {
+  border-radius:13px;
+}
+
+/* Boards — motion-first workspace */
+body[data-wm-surface="shell"] :where(.boards-page,.board-detail-page) { max-width:1680px; }
+body[data-wm-surface="shell"] .board-list-toolbar,
+body[data-wm-surface="shell"] .board-controls,
+body[data-wm-surface="shell"] .board-detail-head {
+  border-radius:20px;
+  border:1px solid var(--motion-border);
+  background:color-mix(in srgb,var(--motion-surface-strong) 76%,transparent);
+  box-shadow:var(--motion-shadow-sm);
+  backdrop-filter:blur(18px);
+}
+body[data-wm-surface="shell"] .board-card {
+  border-radius:22px;
+  overflow:hidden;
+  position:relative;
+}
+body[data-wm-surface="shell"] .board-card::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--motion-accent),var(--motion-accent-2),var(--motion-cyan));
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform var(--motion-medium) var(--motion-ease-out);
+}
+body[data-wm-surface="shell"] .board-card:hover {
+  transform:translateY(-5px);
+  box-shadow:0 22px 52px rgba(31,42,68,.13);
+}
+body[data-wm-surface="shell"] .board-card:hover::after { transform:scaleX(1); }
+body[data-wm-surface="shell"] .board-card-icon { border-radius:14px; }
+body[data-wm-surface="shell"] .board-tabs,
+body[data-wm-surface="shell"] .view-switch,
+body[data-wm-surface="shell"] .item-panel-tabs {
+  border-radius:14px;
+  background:color-mix(in srgb,var(--surface2) 82%,transparent);
+  border:1px solid var(--motion-border);
+  padding:4px;
+}
+body[data-wm-surface="shell"] :where(.board-tab,.view-switch button,.item-panel-tabs button) {
+  border-radius:10px;
+  position:relative;
+}
+body[data-wm-surface="shell"] :where(.board-tab.active,.view-switch button.active,.item-panel-tabs button.active) {
+  background:var(--motion-surface-strong);
+  box-shadow:0 4px 14px rgba(31,42,68,.08);
+}
+body[data-wm-surface="shell"] :where(.board-tab.active,.view-switch button.active,.item-panel-tabs button.active)::after {
+  content:"";
+  position:absolute;
+  left:24%;
+  right:24%;
+  bottom:-3px;
+  height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--motion-accent),var(--motion-accent-2));
+}
+body[data-wm-surface="shell"] .board-table-scroll {
+  border-radius:22px;
+  border:1px solid var(--motion-border);
+  box-shadow:var(--motion-shadow-sm);
+  background:var(--motion-surface);
+}
+body[data-wm-surface="shell"] .board-data-table { background:transparent; }
+body[data-wm-surface="shell"] .board-column-head {
+  background:color-mix(in srgb,var(--motion-surface-strong) 84%,var(--motion-canvas));
+  backdrop-filter:blur(14px);
+}
+body[data-wm-surface="shell"] .board-item-row,
+body[data-wm-surface="shell"] .board-group {
+  transition:background-color var(--motion-fast) ease,transform var(--motion-fast) var(--motion-ease-spring),box-shadow var(--motion-fast) ease;
+}
+body[data-wm-surface="shell"] .board-item-row:hover { background:color-mix(in srgb,var(--motion-accent-2) 4%,var(--motion-surface-strong)); }
+body[data-wm-surface="shell"] .board-cell-button:hover,
+body[data-wm-surface="shell"] .column-header-button:hover { transform:translateY(-1px); }
+body[data-wm-surface="shell"] .kanban-board { gap:16px; }
+body[data-wm-surface="shell"] .kanban-column {
+  border-radius:22px;
+  border:1px solid var(--motion-border);
+  background:color-mix(in srgb,var(--motion-surface) 88%,transparent);
+  box-shadow:var(--motion-shadow-sm);
+}
+body[data-wm-surface="shell"] .kanban-card {
+  border-radius:16px;
+  transition:transform var(--motion-medium) var(--motion-ease-spring),box-shadow var(--motion-medium) ease,border-color var(--motion-medium) ease;
+}
+body[data-wm-surface="shell"] .kanban-card:hover { transform:translateY(-4px) rotate(-.25deg); box-shadow:0 16px 36px rgba(31,42,68,.14); }
+body[data-wm-surface="shell"] .kanban-column.is-drop-target,
+body[data-wm-surface="shell"] .kanban-column[data-drop-active="true"] {
+  border-color:color-mix(in srgb,var(--motion-accent-2) 52%,var(--motion-border));
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--motion-accent-2) 10%,transparent),var(--motion-shadow-sm);
+}
+
+body[data-wm-surface="shell"] .board-item-panel {
+  border-left:1px solid var(--motion-border);
+  background:color-mix(in srgb,var(--motion-surface-strong) 92%,transparent);
+  box-shadow:-24px 0 70px rgba(14,21,38,.13);
+  backdrop-filter:blur(24px) saturate(130%);
+  animation:wmMotionSlideIn var(--motion-slow) var(--motion-ease-out) both;
+}
+body[data-wm-surface="shell"] .item-panel-scrim { backdrop-filter:blur(3px); background:rgba(8,13,24,.22); }
+body[data-wm-surface="shell"] .item-update,
+body[data-wm-surface="shell"] .item-file,
+body[data-wm-surface="shell"] .item-activity-list > * {
+  border-radius:16px;
+  transition:transform var(--motion-fast) var(--motion-ease-spring),background var(--motion-fast) ease,border-color var(--motion-fast) ease;
+}
+body[data-wm-surface="shell"] .item-update:hover,
+body[data-wm-surface="shell"] .item-file:hover { transform:translateX(3px); }
+body[data-wm-surface="shell"] .item-file-drop {
+  border-radius:18px;
+  transition:border-color var(--motion-medium) ease,background var(--motion-medium) ease,transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="shell"] .item-file-drop:hover { transform:translateY(-2px); }
+
+/* dialogs, command palette, forms */
+body[data-wm-surface="shell"] :where(.wm-modal,.command-dialog) {
+  border-radius:24px;
+  border:1px solid var(--motion-border-strong);
+  background:color-mix(in srgb,var(--motion-surface-strong) 96%,transparent);
+  box-shadow:var(--motion-shadow-lg), inset 0 1px rgba(255,255,255,.45);
+  backdrop-filter:blur(28px) saturate(140%);
+}
+body[data-wm-surface="shell"] :where(.wm-modal,.command-dialog) {
+  animation:wmMotionPanelIn 360ms var(--motion-ease-spring) both;
+}
+body[data-wm-surface="shell"] :where(.command-backdrop,.wm-modal-backdrop) { backdrop-filter:blur(8px); }
+@keyframes wmMotionPanelIn {
+  from { opacity:0; transform:translate3d(0,-12px,0) scale(.975); }
+  to { opacity:1; transform:none; }
+}
+body[data-wm-surface="shell"] .command-result:hover,
+body[data-wm-surface="shell"] .command-result[aria-selected="true"] {
+  background:color-mix(in srgb,var(--motion-accent-2) 8%,var(--surface2));
+  transform:translateX(3px);
+}
+body[data-wm-surface="shell"] :where(.primary-btn,.secondary-btn,.theme-chip,.install-btn) {
+  min-height:40px;
+  border-radius:13px;
+}
+body[data-wm-surface="shell"] .primary-btn {
+  border-color:transparent;
+  background:linear-gradient(135deg,#111827,#273654);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(17,24,39,.15);
+}
+body[data-wm-surface="shell"] .primary-btn:hover { transform:translateY(-2px); box-shadow:0 14px 30px rgba(17,24,39,.2); }
+body[data-wm-surface="shell"] .theme-chip.selected {
+  background:linear-gradient(135deg,#111827,#293653);
+  color:#fff;
+}
+body[data-wm-surface="shell"] :where(.app-search input,.board-search,input,select,textarea) {
+  border-radius:13px;
+}
+body[data-wm-surface="shell"] .settings-row,
+body[data-wm-surface="shell"] .user-row {
+  transition:background-color var(--motion-medium) ease,transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="shell"] .settings-row:hover,
+body[data-wm-surface="shell"] .user-row:hover { background:color-mix(in srgb,var(--motion-accent-2) 3.5%,transparent); }
+body[data-wm-surface="shell"] .toast-root > * { animation:wmMotionToast 420ms var(--motion-ease-spring) both; }
+@keyframes wmMotionToast { from{opacity:0;transform:translate3d(18px,0,0) scale(.96)} to{opacity:1;transform:none} }
+
+body[data-wm-surface="shell"] .module-shell { background:#080d18; }
+body[data-wm-surface="shell"] .module-topbar {
+  height:68px;
+  background:rgba(8,13,24,.9);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(18px);
+}
+body[data-wm-surface="shell"] .module-mini-icon {
+  background:linear-gradient(135deg,var(--motion-accent),#ff9c72);
+  box-shadow:0 8px 20px rgba(255,106,61,.24);
+}
+body[data-wm-surface="shell"] .module-stage { background:#eef2f8; }
+body[data-wm-surface="shell"] .frame-loading { background:linear-gradient(180deg,#eef2f8,#f7f8fc); }
+
+/* ================================================================
+   TIMETRACKER
+   ================================================================ */
+body[data-wm-surface="time-tracker"] {
+  --wm-motion-accent:#ff7045;
+  --wm-motion-accent-2:#7b7cf6;
+  --paper:#f4f6fb;
+  --ink:#111827;
+  --muted:#70798b;
+  --line:rgba(25,35,55,.11);
+  --orange:#ff7045;
+  --orange-dark:#d6532d;
+  --sage:#89a99e;
+  --green:#268363;
+  --shadow:0 24px 70px rgba(35,43,60,.10);
+}
+body[data-wm-surface="time-tracker"] .app-shell { padding:0 clamp(18px,3vw,48px); overflow:clip; }
+body[data-wm-surface="time-tracker"] .ambient { filter:blur(24px); opacity:.20; animation:wmMotionDrift 12s ease-in-out infinite; }
+body[data-wm-surface="time-tracker"] .ambient-one { background:#ff936d; }
+body[data-wm-surface="time-tracker"] .ambient-two { background:#7c8df6; animation-delay:-5s; }
+body[data-wm-surface="time-tracker"] .topbar {
+  max-width:1440px;
+  min-height:82px;
+  top:12px;
+  margin-top:12px;
+  padding:0 18px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(255,255,255,.72);
+  box-shadow:var(--motion-shadow-sm);
+  backdrop-filter:blur(22px) saturate(135%);
+}
+body[data-wm-surface="time-tracker"] .brand-mark {
+  border-radius:13px;
+  background:linear-gradient(145deg,#111827,#2b3959);
+  box-shadow:0 10px 24px rgba(17,24,39,.18);
+}
+body[data-wm-surface="time-tracker"] .brand-copy strong { font-family:inherit; font-weight:780; letter-spacing:-.035em; }
+body[data-wm-surface="time-tracker"] .nav-tabs { border-radius:14px; padding:4px; background:rgba(244,246,251,.8); }
+body[data-wm-surface="time-tracker"] .nav-tabs button { border-radius:10px; }
+body[data-wm-surface="time-tracker"] .nav-tabs button.active {
+  background:#111827;
+  box-shadow:0 8px 20px rgba(17,24,39,.15);
+}
+body[data-wm-surface="time-tracker"] main { max-width:1440px; }
+body[data-wm-surface="time-tracker"] :where(.clock-view,.content-view,.overview-view,.ot-view,.roles-view) { padding-top:48px; }
+body[data-wm-surface="time-tracker"] h1,
+body[data-wm-surface="time-tracker"] h2,
+body[data-wm-surface="time-tracker"] .clock-face-content strong,
+body[data-wm-surface="time-tracker"] .date-stack strong,
+body[data-wm-surface="time-tracker"] .metric strong,
+body[data-wm-surface="time-tracker"] .clock-btn span:last-child { font-family:inherit; }
+body[data-wm-surface="time-tracker"] h1 { font-size:clamp(44px,5vw,72px); font-weight:760; letter-spacing:-.055em; }
+body[data-wm-surface="time-tracker"] .eyebrow { color:var(--orange-dark); }
+body[data-wm-surface="time-tracker"] :where(.clock-card,.side-panel,.report-card,.calendar-card,.overview-panel,.role-card,.ot-card,.evidence-card,.filter-panel,.rbac-panel) {
+  border-radius:24px !important;
+  border-color:var(--line);
+  background:rgba(255,255,255,.76);
+  box-shadow:var(--motion-shadow-sm);
+  backdrop-filter:blur(18px) saturate(125%);
+}
+body[data-wm-surface="time-tracker"] .clock-card { padding:30px; overflow:hidden; }
+body[data-wm-surface="time-tracker"] .clock-card::before {
+  background:radial-gradient(circle,rgba(255,112,69,.18),transparent 66%);
+  transition:transform 800ms var(--motion-ease-out),opacity 800ms ease;
+}
+body[data-wm-surface="time-tracker"] .clock-face {
+  width:245px;
+  height:245px;
+  border-color:rgba(17,24,39,.12);
+  background:radial-gradient(circle,rgba(255,255,255,.82),rgba(255,255,255,.35));
+  box-shadow:inset 0 1px rgba(255,255,255,.8);
+}
+body[data-wm-surface="time-tracker"] .clock-face.running {
+  border-color:rgba(255,112,69,.45);
+  box-shadow:0 0 0 14px rgba(255,112,69,.045),0 28px 90px rgba(255,112,69,.18);
+}
+body[data-wm-surface="time-tracker"] .orbit::before {
+  background:linear-gradient(135deg,var(--orange),#ffbd83);
+  box-shadow:0 0 0 7px rgba(255,112,69,.11),0 0 28px rgba(255,112,69,.26);
+}
+body[data-wm-surface="time-tracker"] .clock-btn {
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+}
+body[data-wm-surface="time-tracker"] .clock-btn:not(:disabled):hover { transform:translateY(-5px) scale(1.005); }
+body[data-wm-surface="time-tracker"] .clock-in { background:linear-gradient(135deg,#111827,#253557); }
+body[data-wm-surface="time-tracker"] .clock-out { background:linear-gradient(135deg,#f6653b,#ff8b60); }
+body[data-wm-surface="time-tracker"] :where(.selector-grid select,.modern-select-value,.note-field input,.filter-grid input,.filter-grid select,.search-wide input) {
+  border-radius:14px;
+  background:rgba(255,255,255,.72);
+}
+body[data-wm-surface="time-tracker"] :where(.log-record,.recent-list article,.activity-item,.ot-activity-row,.whereabouts-person,.overview-dept-row) {
+  transition:transform var(--motion-fast) var(--motion-ease-spring),background var(--motion-fast) ease,border-color var(--motion-fast) ease;
+}
+body[data-wm-surface="time-tracker"] :where(.log-record,.activity-item,.ot-activity-row,.whereabouts-person):hover { transform:translateX(3px); }
+body[data-wm-surface="time-tracker"] .modal-backdrop { backdrop-filter:blur(8px); background:rgba(17,24,39,.34); }
+body[data-wm-surface="time-tracker"] .modal { border-radius:24px; box-shadow:var(--motion-shadow-lg); animation:wmMotionPanelIn 360ms var(--motion-ease-spring) both; }
+body[data-wm-surface="time-tracker"] :where(.primary-action,.secondary-action,.text-button,.button-icon) { border-radius:13px; }
+
+/* ================================================================
+   FUELTRACK+
+   ================================================================ */
+body[data-wm-surface="fueltrack"] {
+  --wm-motion-accent:#36d4b6;
+  --wm-motion-accent-2:#6c7cff;
+  --fuel-canvas-0:#07111f;
+  --fuel-canvas-1:#0a1423;
+  --fuel-canvas-2:#0c1727;
+  --fuel-ambient-a:rgba(54,212,182,.10);
+  --fuel-ambient-b:rgba(108,124,255,.13);
+  --fuel-chrome-border:rgba(160,188,222,.12);
+  --fuel-sidebar-bg:linear-gradient(155deg,rgba(8,18,34,.95),rgba(11,26,44,.92));
+  --fuel-topbar-bg:rgba(9,20,36,.72);
+  --fuel-card-bg:linear-gradient(145deg,rgba(15,29,49,.84),rgba(11,24,42,.78));
+  --fuel-card-border:rgba(154,180,216,.12);
+  --fuel-card-inset:rgba(255,255,255,.035);
+  --fuel-shell-shadow:0 28px 80px rgba(0,0,0,.34);
+  --fuel-card-shadow:0 18px 50px rgba(0,0,0,.18);
+  --fuel-dialog-backdrop:rgba(2,7,15,.62);
+  background-color:var(--fuel-canvas-0);
+  background-image:
+    radial-gradient(circle at var(--motion-x) var(--motion-y),var(--fuel-ambient-a),transparent 25rem),
+    radial-gradient(circle at 95% 4%,var(--fuel-ambient-b),transparent 28rem),
+    linear-gradient(180deg,var(--fuel-canvas-0),var(--fuel-canvas-1) 45%,var(--fuel-canvas-2));
+}
+html.light body[data-wm-surface="fueltrack"] {
+  --fuel-canvas-0:#f7f9fc;
+  --fuel-canvas-1:#f1f5f9;
+  --fuel-canvas-2:#edf3f8;
+  --fuel-ambient-a:rgba(28,170,143,.09);
+  --fuel-ambient-b:rgba(79,105,225,.08);
+  --fuel-chrome-border:rgba(38,61,88,.12);
+  --fuel-sidebar-bg:linear-gradient(155deg,rgba(255,255,255,.97),rgba(246,249,253,.96));
+  --fuel-topbar-bg:rgba(255,255,255,.86);
+  --fuel-card-bg:linear-gradient(145deg,rgba(255,255,255,.96),rgba(247,250,253,.94));
+  --fuel-card-border:rgba(38,61,88,.12);
+  --fuel-card-inset:rgba(255,255,255,.82);
+  --fuel-shell-shadow:0 24px 64px rgba(50,72,98,.11);
+  --fuel-card-shadow:0 16px 42px rgba(50,72,98,.09);
+  --fuel-dialog-backdrop:rgba(17,29,45,.34);
+}
+body[data-wm-surface="fueltrack"] .ambient { opacity:.34; filter:blur(40px); animation:wmMotionDrift 14s ease-in-out infinite; }
+body[data-wm-surface="fueltrack"] .app-frame { gap:0; }
+body[data-wm-surface="fueltrack"] .sidebar {
+  margin:14px 0 14px 14px;
+  height:calc(100vh - 28px);
+  border-radius:28px;
+  border:1px solid var(--fuel-chrome-border);
+  background:var(--fuel-sidebar-bg);
+  box-shadow:var(--fuel-shell-shadow),inset 0 1px var(--fuel-card-inset);
+  overflow:hidden auto;
+}
+body[data-wm-surface="fueltrack"] .brand-mark { box-shadow:0 14px 34px rgba(54,212,182,.16); }
+body[data-wm-surface="fueltrack"] .nav-item {
+  border-radius:14px;
+  position:relative;
+  overflow:hidden;
+}
+body[data-wm-surface="fueltrack"] .nav-item::before {
+  content:"";
+  position:absolute;
+  inset:8px auto 8px 0;
+  width:3px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#36d4b6,#6c7cff);
+  transform:scaleY(0);
+  transition:transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="fueltrack"] .nav-item.active::before { transform:scaleY(1); }
+body[data-wm-surface="fueltrack"] .nav-item:hover { transform:translateX(3px); }
+body[data-wm-surface="fueltrack"] .main-shell { margin-left:14px; }
+body[data-wm-surface="fueltrack"] .topbar {
+  top:14px;
+  margin:14px 14px 0 0;
+  border:1px solid var(--fuel-chrome-border);
+  border-radius:22px;
+  background:var(--fuel-topbar-bg);
+  box-shadow:var(--fuel-card-shadow);
+  backdrop-filter:blur(22px) saturate(140%);
+}
+body[data-wm-surface="fueltrack"] .global-search,
+body[data-wm-surface="fueltrack"] .profile-chip,
+body[data-wm-surface="fueltrack"] .auto-refresh-status {
+  border-radius:14px;
+}
+body[data-wm-surface="fueltrack"] .content { padding-top:38px; }
+body[data-wm-surface="fueltrack"] :where(.panel,.card,.kpi-card,.chart-card,.tank-card,.metric-card,.request-card,.analytics-panel,.queue-card,.lightfuel-card,.form-card,.activity-card,.role-card) {
+  border-radius:22px !important;
+  border-color:var(--fuel-card-border) !important;
+  background:var(--fuel-card-bg) !important;
+  box-shadow:var(--fuel-card-shadow),inset 0 1px var(--fuel-card-inset);
+  backdrop-filter:blur(18px) saturate(120%);
+}
+body[data-wm-surface="fueltrack"] :where(.button,.icon-button,.filter-chip,.status-chip,.tab-button) { border-radius:13px; }
+body[data-wm-surface="fueltrack"] .button.primary {
+  background:linear-gradient(135deg,#20bd9f,#35d8ba);
+  border-color:transparent;
+  box-shadow:0 12px 26px rgba(54,212,182,.20);
+}
+body[data-wm-surface="fueltrack"] .button.primary:hover { transform:translateY(-2px); box-shadow:0 16px 34px rgba(54,212,182,.27); }
+body[data-wm-surface="fueltrack"] :where(.input,.select,.textarea,input,select,textarea) { border-radius:13px; }
+body[data-wm-surface="fueltrack"] :where(.request-row,.approval-row,.activity-item,.role-row,.inventory-row) {
+  transition:background-color var(--motion-fast) ease,transform var(--motion-fast) var(--motion-ease-spring);
+}
+body[data-wm-surface="fueltrack"] :where(.request-row,.approval-row,.activity-item,.role-row,.inventory-row):hover { transform:translateX(3px); }
+body[data-wm-surface="fueltrack"] .app-dialog {
+  border-radius:24px;
+  box-shadow:0 40px 110px rgba(0,0,0,.5);
+}
+body[data-wm-surface="fueltrack"] .app-dialog[open] { animation:wmMotionPanelIn 360ms var(--motion-ease-spring) both; }
+body[data-wm-surface="fueltrack"] .app-dialog::backdrop { background:var(--fuel-dialog-backdrop); backdrop-filter:blur(8px); }
+body[data-wm-surface="fueltrack"] .toast-region > * { animation:wmMotionToast 420ms var(--motion-ease-spring) both; }
+
+/* ================================================================
+   TRADELINK
+   ================================================================ */
+body[data-wm-surface="tradelink"] {
+  --wm-motion-accent:#4169f5;
+  --wm-motion-accent-2:#1bb7a4;
+  --bg:#f4f6fb;
+  --surface:#fff;
+  --surface-subtle:#f8faff;
+  --surface-muted:#eef2fa;
+  --ink:#101728;
+  --ink-2:#25334b;
+  --muted:#556277;
+  --soft:#667085;
+  --line:#e0e6f0;
+  --line-strong:#cbd5e4;
+  --brand:#4169f5;
+  --brand-hover:#3156d5;
+  --brand-soft:#eef2ff;
+  --accent:#138f81;
+  --accent-soft:#e9f8f5;
+  --shadow-sm:0 10px 26px rgba(31,42,68,.06);
+  --shadow-md:0 20px 50px rgba(31,42,68,.10);
+  --shadow-lg:0 36px 100px rgba(17,24,39,.19);
+}
+body[data-wm-surface="tradelink"] .topbar {
+  top:12px;
+  margin:12px 16px 0;
+  min-height:68px;
+  border:1px solid rgba(31,42,68,.10);
+  border-radius:22px;
+  background:rgba(255,255,255,.78);
+  box-shadow:var(--motion-shadow-sm);
+  backdrop-filter:blur(22px) saturate(145%);
+}
+body[data-wm-surface="tradelink"] .brand-mark {
+  border-radius:14px;
+  background:linear-gradient(145deg,#5279ff,#3157d8);
+  box-shadow:0 12px 26px rgba(65,105,245,.25),inset 0 1px rgba(255,255,255,.28);
+  transition:transform var(--motion-medium) var(--motion-ease-spring);
+}
+body[data-wm-surface="tradelink"] .brand-lockup:hover .brand-mark { transform:rotate(4deg) scale(1.04); }
+body[data-wm-surface="tradelink"] .nav-tabs { border-radius:14px; background:#f4f6fb; }
+body[data-wm-surface="tradelink"] .nav-tabs button { border-radius:10px; }
+body[data-wm-surface="tradelink"] .nav-tabs button.active { box-shadow:0 7px 18px rgba(31,42,68,.09); }
+body[data-wm-surface="tradelink"] .vendor-pill { border-radius:14px; }
+body[data-wm-surface="tradelink"] .view { padding-top:38px; }
+body[data-wm-surface="tradelink"] :where(.card,.section-card,.create-workspace,.create-commandbar,.documents-commandbar,.documents-filter-panel,.template-card,.manual-card,.snapshot-card,.company-profile-card,.financial-workspace,.approval-card,.client-lookup-card) {
+  border-radius:22px !important;
+  border-color:rgba(31,42,68,.10);
+  background:rgba(255,255,255,.82);
+  box-shadow:var(--motion-shadow-sm);
+  backdrop-filter:blur(18px) saturate(125%);
+}
+body[data-wm-surface="tradelink"] .create-commandbar {
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 84% 10%,rgba(65,105,245,.09),transparent 22rem),
+    rgba(255,255,255,.88);
+}
+body[data-wm-surface="tradelink"] .create-commandbar::before {
+  width:4px;
+  background:linear-gradient(180deg,#4169f5,#1bb7a4,#ff7a4e);
+}
+body[data-wm-surface="tradelink"] :where(.button,.toolbar button,.modal-actions button,.icon-button,.icon-action) { border-radius:13px; }
+body[data-wm-surface="tradelink"] .button.primary {
+  background:linear-gradient(135deg,#4169f5,#3157d8);
+  border-color:transparent;
+  box-shadow:0 10px 24px rgba(65,105,245,.20);
+}
+body[data-wm-surface="tradelink"] .button.primary:hover { transform:translateY(-2px); box-shadow:0 15px 32px rgba(65,105,245,.26); }
+body[data-wm-surface="tradelink"] .command-actions .button.save {
+  background:linear-gradient(135deg,#159376,#1db89a);
+  border-color:transparent;
+  box-shadow:0 10px 24px rgba(27,183,164,.18);
+}
+body[data-wm-surface="tradelink"] :where(input,select,textarea,.vat-select-wrap,.vendor-pill) { border-radius:13px; }
+body[data-wm-surface="tradelink"] :where(.item-row,.quotation-item-row,.packing-item-row,.delivery-item-row,.activity-item,.documents-table tbody tr,.client-lookup-row,.approval-step) {
+  transition:transform var(--motion-fast) var(--motion-ease-spring),background var(--motion-fast) ease,border-color var(--motion-fast) ease,box-shadow var(--motion-fast) ease;
+}
+body[data-wm-surface="tradelink"] :where(.item-row,.quotation-item-row,.packing-item-row,.delivery-item-row,.activity-item,.client-lookup-row):hover { transform:translateX(3px); }
+body[data-wm-surface="tradelink"] .documents-table tbody tr:hover { transform:none; background:#f7f9ff; }
+body[data-wm-surface="tradelink"] .modal-backdrop { backdrop-filter:blur(8px); background:rgba(17,24,39,.34); }
+body[data-wm-surface="tradelink"] .modal { border-radius:24px; box-shadow:var(--motion-shadow-lg); animation:wmMotionPanelIn 360ms var(--motion-ease-spring) both; }
+body[data-wm-surface="tradelink"] .status-badge,
+body[data-wm-surface="tradelink"] .info-chip,
+body[data-wm-surface="tradelink"] .workflow-pill,
+body[data-wm-surface="tradelink"] .count-pill { border-radius:999px; }
+body[data-wm-surface="tradelink"] .create-type-tabs {
+  top:94px;
+  border-radius:16px;
+  background:rgba(246,248,253,.88);
+  backdrop-filter:blur(18px);
+}
+body[data-wm-surface="tradelink"] .create-type-tabs button { border-radius:11px; }
+body[data-wm-surface="tradelink"] .create-type-tabs button.active { box-shadow:0 7px 18px rgba(31,42,68,.08); }
+
+/* ---------- responsive motion surfaces ---------- */
+@media (max-width: 900px) {
+  body[data-wm-surface="shell"] .shell { grid-template-columns:86px minmax(0,1fr); }
+  body[data-wm-surface="shell"] .sidebar { width:72px; }
+  body[data-wm-surface="shell"] .workspace { margin-left:86px; }
+  body[data-wm-surface="shell"] .topbar { margin-right:12px; }
+  body[data-wm-surface="shell"] .page { padding-left:24px; padding-right:24px; }
+}
+
+@media (max-width: 620px) {
+  body[data-wm-surface="shell"] .workspace { margin-left:0; padding-bottom:78px; }
+  body[data-wm-surface="shell"] .sidebar {
+    inset:auto 10px 10px;
+    width:auto;
+    height:68px;
+    border-radius:22px;
+    padding:7px 10px;
+  }
+  body[data-wm-surface="shell"] .topbar {
+    top:8px;
+    margin:8px 10px 0;
+    border-radius:18px;
+  }
+  body[data-wm-surface="shell"] .page { padding:22px 14px 30px; }
+  body[data-wm-surface="shell"] .hero-panel { border-radius:26px; padding:30px 25px; }
+  body[data-wm-surface="shell"] .module-card { border-radius:22px; }
+  body[data-wm-surface="shell"] .board-item-panel { width:100%; max-width:none; }
+
+  body[data-wm-surface="time-tracker"] .topbar { top:8px; margin-top:8px; border-radius:18px; }
+  body[data-wm-surface="time-tracker"] .app-shell { padding:0 12px; }
+
+  body[data-wm-surface="fueltrack"] .sidebar { margin:0; height:100vh; border-radius:0 24px 24px 0; }
+  body[data-wm-surface="fueltrack"] .main-shell { margin-left:0; }
+  body[data-wm-surface="fueltrack"] .topbar { margin:8px 8px 0; top:8px; border-radius:18px; }
+
+  body[data-wm-surface="tradelink"] .topbar { margin:8px 8px 0; top:8px; border-radius:18px; }
+}
+
+/* Reduced motion is a first-class mode, not an afterthought. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 1ms; --motion-medium: 1ms; --motion-slow: 1ms; }
+  body[data-wm-surface] { background-attachment:scroll; }
+  body[data-wm-surface] *,
+  body[data-wm-surface] *::before,
+  body[data-wm-surface] *::after {
+    scroll-behavior:auto !important;
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .wm-motion-reveal { opacity:1 !important; transform:none !important; filter:none !important; }
+}
+
+/* Shell authentication, account, administration and utility surfaces */
+body[data-wm-surface="shell"] .auth-shell {
+  min-height:100vh;
+  background:
+    radial-gradient(circle at var(--motion-x) var(--motion-y),rgba(255,106,61,.14),transparent 24rem),
+    radial-gradient(circle at 82% 16%,rgba(108,124,255,.18),transparent 30rem),
+    linear-gradient(145deg,#080d18,#10182b 58%,#141a2d);
+}
+body[data-wm-surface="shell"] .auth-panel {
+  border-radius:30px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 40px 120px rgba(0,0,0,.34);
+  backdrop-filter:blur(30px) saturate(140%);
+  animation:wmMotionPanelIn 480ms var(--motion-ease-spring) both;
+}
+:root[data-theme="dark"] body[data-wm-surface="shell"] .auth-panel {
+  background:rgba(18,26,43,.92);
+  border-color:rgba(255,255,255,.08);
+}
+body[data-wm-surface="shell"] .auth-brand .brand-mark { transform:rotate(-5deg); }
+body[data-wm-surface="shell"] .auth-panel :where(input,select,textarea) {
+  min-height:46px;
+  border-radius:14px;
+  background:color-mix(in srgb,var(--surface2) 84%,transparent);
+}
+body[data-wm-surface="shell"] .auth-switch {
+  border-radius:14px;
+  background:color-mix(in srgb,var(--motion-accent-2) 6%,var(--surface2));
+}
+body[data-wm-surface="shell"] .verification-state,
+body[data-wm-surface="shell"] .auth-message,
+body[data-wm-surface="shell"] .auth-confirmation-help,
+body[data-wm-surface="shell"] .auth-rate-note {
+  border-radius:16px;
+}
+body[data-wm-surface="shell"] .account-page .settings-card,
+body[data-wm-surface="shell"] .users-page .user-directory-card { border-radius:26px; }
+body[data-wm-surface="shell"] .role-policy span {
+  border-radius:16px;
+  background:var(--motion-surface);
+  box-shadow:var(--motion-shadow-sm);
+}
+body[data-wm-surface="shell"] .user-row select,
+body[data-wm-surface="shell"] .inline-account-form input { border-radius:13px; }
+body[data-wm-surface="shell"] .storage-meter > span {
+  background:linear-gradient(90deg,var(--motion-accent),var(--motion-accent-2));
+  transition:width 520ms var(--motion-ease-out);
+}
+body[data-wm-surface="shell"] .diagnostic-item,
+body[data-wm-surface="shell"] .role-map-row {
+  transition:transform var(--motion-fast) var(--motion-ease-spring),background-color var(--motion-fast) ease;
+}
+body[data-wm-surface="shell"] .diagnostic-item:hover,
+body[data-wm-surface="shell"] .role-map-row:hover { transform:translateX(3px); }
+
+/* Motion vocabulary for common status/feedback primitives in every surface. */
+body[data-wm-surface] :where(.status-dot,.event-dot,.live-dot,.activity-dot,.notification-dot,.auto-refresh-dot) {
+  transition:transform var(--motion-medium) var(--motion-ease-spring),box-shadow var(--motion-medium) ease,background-color var(--motion-medium) ease;
+}
+body[data-wm-surface] :where(.status-dot,.event-dot,.live-dot,.activity-dot,.notification-dot,.auto-refresh-dot):not(:empty) { will-change:transform; }
+body[data-wm-surface] :where(.spinner,.verification-spinner,.button-spinner,.frame-loading span) { transform-origin:center; }
+body[data-wm-surface] :where(.empty-state,.empty,.board-schema-empty,.kanban-empty,.item-panel-empty,.compact-empty) {
+  animation:wmMotionSoftIn 420ms var(--motion-ease-out) both;
+}
+@keyframes wmMotionSoftIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ================================================================
+   v1.29.1 — Theme coherence and contrast refinement
+   Repairs legacy color leakage introduced by pre-motion component
+   layers while keeping the motion/runtime behavior unchanged.
+   ================================================================ */
+
+/* TimeTracker: eliminate the remaining warm legacy dropdown/surface palette. */
+body[data-wm-surface="time-tracker"] {
+  --tt-control-bg:rgba(255,255,255,.86);
+  --tt-control-bg-strong:#ffffff;
+  --tt-control-hover:#f6f8fc;
+  --tt-control-selected:#fff0eb;
+  --tt-control-border:rgba(31,42,68,.14);
+  --tt-control-border-hover:rgba(31,42,68,.24);
+  --tt-control-shadow:0 18px 48px rgba(31,42,68,.14),0 3px 10px rgba(31,42,68,.06);
+}
+body[data-wm-surface="time-tracker"] :where(.selector-grid select,.note-field input,.history-toolbar input,.filter-grid input,.filter-grid select,.modal input,.modal select,.modal textarea,.overview-search,.overview-filterbar,.overview-filterbar select,.overview-search-row > label:last-child) {
+  background-color:var(--tt-control-bg);
+  color:var(--ink);
+  border-color:var(--tt-control-border);
+}
+body[data-wm-surface="time-tracker"] :where(.selector-grid select,.filter-grid select,.overview-filterbar select):hover {
+  background-color:var(--tt-control-bg-strong);
+  border-color:var(--tt-control-border-hover);
+}
+body[data-wm-surface="time-tracker"] .modern-select {
+  --dropdown-bg:var(--tt-control-bg-strong);
+  --dropdown-hover:var(--tt-control-hover);
+  --dropdown-selected:var(--tt-control-selected);
+}
+body[data-wm-surface="time-tracker"] .modern-select-trigger {
+  background:var(--tt-control-bg);
+  border-color:var(--tt-control-border);
+  color:var(--ink);
+  box-shadow:inset 0 1px rgba(255,255,255,.88);
+}
+body[data-wm-surface="time-tracker"] .modern-select-trigger:hover {
+  background:var(--tt-control-bg-strong);
+  border-color:var(--tt-control-border-hover);
+}
+body[data-wm-surface="time-tracker"] .modern-select.open .modern-select-trigger,
+body[data-wm-surface="time-tracker"] .modern-select-trigger:focus-visible {
+  background:var(--tt-control-bg-strong);
+  border-color:rgba(255,112,69,.72);
+  box-shadow:0 0 0 4px rgba(255,112,69,.10),0 10px 30px rgba(31,42,68,.08);
+}
+/* Open menus are portaled to body, so they need their own authoritative palette. */
+body[data-wm-surface="time-tracker"] > .modern-select-menu,
+body[data-wm-surface="time-tracker"] .modern-select-menu {
+  --dropdown-bg:var(--tt-control-bg-strong);
+  --dropdown-hover:var(--tt-control-hover);
+  --dropdown-selected:var(--tt-control-selected);
+  background:var(--tt-control-bg-strong);
+  background-color:var(--tt-control-bg-strong);
+  color:var(--ink);
+  border-color:var(--tt-control-border);
+  box-shadow:var(--tt-control-shadow);
+}
+body[data-wm-surface="time-tracker"] > .modern-select-menu::before,
+body[data-wm-surface="time-tracker"] .modern-select-menu::before { background:var(--tt-control-bg-strong); }
+body[data-wm-surface="time-tracker"] .modern-select-option { color:var(--ink); }
+body[data-wm-surface="time-tracker"] .modern-select-option:hover,
+body[data-wm-surface="time-tracker"] .modern-select-option:focus-visible { background:var(--tt-control-hover); }
+body[data-wm-surface="time-tracker"] .modern-select-option.selected { background:var(--tt-control-selected); }
+body[data-wm-surface="time-tracker"] .modern-select-option[aria-disabled="true"],
+body[data-wm-surface="time-tracker"] .modern-select-option:disabled,
+body[data-wm-surface="time-tracker"] .modern-select.is-disabled .modern-select-trigger { opacity:.64; }
+
+/* FuelTrack+: one semantic motion layer for both theme modes. */
+html.light body[data-wm-surface="fueltrack"] .ambient { opacity:.20; }
+html.light body[data-wm-surface="fueltrack"] .brand-mark {
+  border-color:rgba(27,166,139,.24);
+  background:linear-gradient(145deg,rgba(34,197,166,.16),rgba(92,124,250,.10));
+  box-shadow:0 12px 30px rgba(48,91,120,.10);
+}
+html.light body[data-wm-surface="fueltrack"] .nav-item:hover {
+  background:rgba(31,55,82,.055);
+  color:var(--text);
+}
+html.light body[data-wm-surface="fueltrack"] .nav-item.active {
+  background:linear-gradient(90deg,rgba(32,190,157,.13),rgba(92,124,250,.07));
+  border-color:rgba(31,165,140,.20);
+}
+html.light body[data-wm-surface="fueltrack"] :where(.global-search,.profile-chip,.auto-refresh-status,.icon-button,.search-box,.select,.segmented,.data-banner) {
+  background:rgba(255,255,255,.82);
+  border-color:rgba(38,61,88,.12);
+  box-shadow:0 1px 2px rgba(50,72,98,.035);
+}
+html.light body[data-wm-surface="fueltrack"] :where(.global-search,.profile-chip,.auto-refresh-status,.icon-button,.search-box,.select,.segmented,.data-banner):hover {
+  border-color:rgba(38,61,88,.20);
+}
+html.light body[data-wm-surface="fueltrack"] .data-table th { background:#f3f6fa; color:#66788d; }
+html.light body[data-wm-surface="fueltrack"] .data-table tbody tr:hover { background:rgba(41,72,104,.045); }
+html.light body[data-wm-surface="fueltrack"] .bar-track,
+html.light body[data-wm-surface="fueltrack"] .tank-level { background:rgba(65,91,119,.075); }
+html.light body[data-wm-surface="fueltrack"] .donut { background:conic-gradient(var(--accent) calc(var(--p)*1%),rgba(83,107,135,.12) 0); }
+html.light body[data-wm-surface="fueltrack"] .validation-box,
+html.light body[data-wm-surface="fueltrack"] .approval-card,
+html.light body[data-wm-surface="fueltrack"] .request-mode-option:hover { background:rgba(36,61,88,.035); }
+html.light body[data-wm-surface="fueltrack"] .request-mode-option.active { background:#fff; box-shadow:0 8px 24px rgba(50,72,98,.09); }
+html.light body[data-wm-surface="fueltrack"] .skeleton { background:rgba(76,99,125,.10); }
+html.light body[data-wm-surface="fueltrack"] .skeleton::after { background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent); }
+html.light body[data-wm-surface="fueltrack"] .app-dialog { box-shadow:0 34px 90px rgba(36,55,76,.22); }
+html.light body[data-wm-surface="fueltrack"] .button.danger { background:#c83e59; color:#fff; }
+html.light body[data-wm-surface="fueltrack"] :where(input,select,textarea,.input,.select,.textarea) {
+  color:var(--text);
+  caret-color:var(--accent);
+}
+html.light body[data-wm-surface="fueltrack"] :where(input,textarea)::placeholder { color:var(--text-3); opacity:1; }
+html.light body[data-wm-surface="fueltrack"] button:disabled { opacity:.62; }
+
+/* TradeLink: reconcile the older dark-chrome layer with the v1.28 light motion shell. */
+body[data-wm-surface="tradelink"] {
+  --muted:#556277;
+  --soft:#667085;
+  --tl-chrome-text:#172033;
+  --tl-chrome-muted:#657287;
+  --tl-control-muted:#657287;
+  --tl-placeholder:#667085;
+  --tl-disabled:#667085;
+}
+body[data-wm-surface="tradelink"] .topbar {
+  border-color:rgba(31,42,68,.11);
+  background:rgba(255,255,255,.88);
+  color:var(--tl-chrome-text);
+}
+body[data-wm-surface="tradelink"] .brand-copy strong { color:var(--tl-chrome-text); }
+body[data-wm-surface="tradelink"] .brand-copy small { color:var(--tl-chrome-muted); }
+body[data-wm-surface="tradelink"] .nav-tabs {
+  border-color:#dde4ef;
+  background:#f4f6fb;
+  box-shadow:inset 0 1px rgba(255,255,255,.86);
+}
+body[data-wm-surface="tradelink"] .nav-tabs button { color:#5f6c80; }
+body[data-wm-surface="tradelink"] .nav-tabs button:hover { color:#172033; background:#fff; }
+body[data-wm-surface="tradelink"] .nav-tabs button.active { color:#172033; background:#fff; box-shadow:0 7px 18px rgba(31,42,68,.09); }
+body[data-wm-surface="tradelink"] .nav-tabs button.css3-icon-control:not(.active) .css3-button-icon { background:#eef2f8; }
+body[data-wm-surface="tradelink"] .nav-tabs button:disabled {
+  opacity:1;
+  color:#667085;
+  background:transparent;
+}
+body[data-wm-surface="tradelink"] .vendor-pill {
+  border-color:#dce3ed;
+  background:#f8faff;
+  color:#344054;
+  box-shadow:0 1px 2px rgba(31,42,68,.04);
+}
+body[data-wm-surface="tradelink"] .vendor-pill:hover,
+body[data-wm-surface="tradelink"] .vendor-pill:focus-visible { border-color:#b9c6d8; background:#fff; }
+body[data-wm-surface="tradelink"] .vendor-pill-icon { background:#eef4ff; color:var(--brand); }
+body[data-wm-surface="tradelink"] .vendor-pill-name { color:#344054; }
+body[data-wm-surface="tradelink"] .vendor-pill-chevron { color:#667085; }
+body[data-wm-surface="tradelink"] .create-commandbar {
+  border-color:rgba(31,42,68,.10);
+  background:
+    radial-gradient(circle at 84% 10%,rgba(65,105,245,.09),transparent 22rem),
+    linear-gradient(145deg,rgba(255,255,255,.96),rgba(247,249,254,.94));
+  color:var(--ink);
+  box-shadow:0 18px 44px rgba(31,42,68,.09);
+}
+body[data-wm-surface="tradelink"] .create-commandbar::after { opacity:.55; }
+body[data-wm-surface="tradelink"] .document-icon {
+  background:var(--brand-soft);
+  color:var(--brand);
+  box-shadow:inset 0 0 0 1px rgba(65,105,245,.10);
+}
+body[data-wm-surface="tradelink"] .document-heading h1 { color:var(--ink); }
+body[data-wm-surface="tradelink"] .document-heading small { color:#167247; }
+body[data-wm-surface="tradelink"] .command-actions .button {
+  background:#fff;
+  border-color:#d6deea;
+  color:#344054;
+}
+body[data-wm-surface="tradelink"] .command-actions .button:hover { background:#f7f9fd; border-color:#b9c6d8; }
+body[data-wm-surface="tradelink"] .command-actions .button.save { background:#16834b; border-color:#16834b; color:#fff; }
+body[data-wm-surface="tradelink"] :where(.form-section-title small,.field-help,.doc-sub,.approval-created-card small,.approval-readiness span,.approval-policy-note,.packing-char-count,.payment-preview-card span,.payment-preview-workflow span,.payment-preview-workflow small) {
+  color:var(--tl-control-muted);
+}
+body[data-wm-surface="tradelink"] :where(input,textarea)::placeholder { color:var(--tl-placeholder); opacity:1; }
+body[data-wm-surface="tradelink"] :where(input,select,textarea):disabled,
+body[data-wm-surface="tradelink"] .number-preview,
+body[data-wm-surface="tradelink"] .status-managed-field input:disabled {
+  color:var(--tl-disabled) !important;
+  background:#f3f5f8 !important;
+  border-color:#dce3ec !important;
+  -webkit-text-fill-color:var(--tl-disabled);
+  opacity:1;
+}
+body[data-wm-surface="tradelink"] .command-actions .button:disabled,
+body[data-wm-surface="tradelink"] .button:disabled {
+  color:#68758a;
+  background:#edf1f6;
+  border-color:#dce3ec;
+  opacity:1;
+}
+body[data-wm-surface="tradelink"] .button.primary:disabled,
+body[data-wm-surface="tradelink"] .button.save:disabled { color:#667085; }
+
+/* ================================================================
+   v1.29.1 — TimeTracker palette completion
+   Keeps overview filters/records/calendar surfaces on the same cool
+   neutral system as the redesigned Clock and dropdown components.
+   ================================================================ */
+body[data-wm-surface="time-tracker"] {
+  --tt-overview-surface:rgba(255,255,255,.88);
+  --tt-overview-soft:#f7f9fc;
+  --tt-overview-muted:#eef2f7;
+  --tt-overview-line:rgba(31,42,68,.12);
+  --tt-overview-text:#5f6b7c;
+}
+body[data-wm-surface="time-tracker"] :where(.overview-control-dock,.overview-section,.overview-panel,.overview-record-kpis,.overview-table-wrap,.calendar-summary,.filter-panel,.rbac-panel,.ot-activity-panel) {
+  border-color:var(--tt-overview-line);
+  background-color:var(--tt-overview-surface);
+}
+body[data-wm-surface="time-tracker"] .overview-control-dock {
+  background:rgba(255,255,255,.90);
+  box-shadow:0 10px 34px rgba(31,42,68,.08);
+}
+body[data-wm-surface="time-tracker"] :where(.overview-control-dock .overview-search,.overview-control-dock .modern-select-trigger,.overview-filterbar select,.overview-filterbar .modern-select-trigger,.filter-grid input,.filter-grid select,.filter-grid .modern-select-trigger) {
+  background:var(--tt-overview-soft);
+  border-color:var(--tt-overview-line);
+  color:var(--ink);
+}
+body[data-wm-surface="time-tracker"] .overview-table th,
+body[data-wm-surface="time-tracker"] .calendar-weekdays {
+  background:var(--tt-overview-muted);
+  color:var(--tt-overview-text);
+}
+
+/* ================================================================
+   v1.30.0 — Motion architecture redesign
+   Purposeful choreography with persistent chrome, shared indicators,
+   contextual overlays, richer state feedback, and responsive motion density.
+   ================================================================ */
+
+/* --- Shared moving navigation indicator --- */
+body[data-wm-surface] .wm-motion-nav {
+  position: relative !important;
+  isolation: isolate;
+}
+body[data-wm-surface] .wm-motion-nav > :not(.wm-motion-indicator) {
+  position: relative;
+  z-index: 1;
+}
+body[data-wm-surface] .wm-motion-indicator {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: var(--wm-ind-w, 0px);
+  height: var(--wm-ind-h, 0px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(var(--wm-ind-x,0px),var(--wm-ind-y,0px),0);
+  border-radius: 999px;
+  background: linear-gradient(90deg,var(--wm-motion-accent,var(--motion-accent)),var(--wm-motion-accent-2,var(--motion-accent-2)));
+  box-shadow: 0 0 18px color-mix(in srgb,var(--wm-motion-accent,var(--motion-accent)) 22%,transparent);
+  transition:
+    transform var(--wm-motion-duration-deliberate) var(--wm-motion-ease-emphasized),
+    width var(--wm-motion-duration-deliberate) var(--wm-motion-ease-emphasized),
+    height var(--wm-motion-duration-deliberate) var(--wm-motion-ease-emphasized),
+    opacity var(--wm-motion-duration-fast) ease;
+  will-change: transform,width,height;
+}
+body[data-wm-surface] .wm-motion-nav[data-wm-indicator-mode="vertical"] .wm-motion-indicator {
+  left: 0;
+  background: linear-gradient(180deg,var(--wm-motion-accent,var(--motion-accent)),var(--wm-motion-accent-2,var(--motion-accent-2)));
+}
+
+/* --- Overlays, menus, drawers, dialogs --- */
+body[data-wm-surface] [data-wm-motion-overlay="1"] {
+  animation: wmOverlayIn var(--wm-motion-duration-standard) ease both;
+}
+body[data-wm-surface] [data-wm-motion-surface="1"],
+body[data-wm-surface] dialog[open] {
+  transform-origin: var(--wm-motion-origin,50% 0%);
+  animation: wmSurfaceIn var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter) both;
+}
+body[data-wm-surface] :where(.modern-select-menu,.context-menu,.context-menu-pop,.column-context-menu,.activity-more-popover,.document-action-menu) {
+  transform-origin: top center;
+  animation: wmMenuIn var(--wm-motion-duration-standard) var(--wm-motion-ease-enter) both;
+}
+body[data-wm-surface] :where(.company-panel,.item-panel) {
+  transform-origin: right center;
+  animation: wmDrawerIn var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter) both;
+}
+body[data-wm-surface] :where(.command-backdrop.closing,.wm-modal-backdrop.is-closing,.modal-backdrop.is-closing,.company-panel-backdrop.is-closing) {
+  animation: wmOverlayOut var(--wm-motion-duration-fast) var(--wm-motion-ease-exit) both;
+}
+body[data-wm-surface] :where(.command-backdrop.closing .command-dialog,.wm-modal-backdrop.is-closing .wm-modal,.modal-backdrop.is-closing .modal,.company-panel.is-closing) {
+  animation: wmSurfaceOut var(--wm-motion-duration-fast) var(--wm-motion-ease-exit) both;
+}
+@keyframes wmOverlayIn { from { opacity:0 } to { opacity:1 } }
+@keyframes wmOverlayOut { from { opacity:1 } to { opacity:0 } }
+@keyframes wmSurfaceIn {
+  from { opacity:0; transform:translate3d(0,var(--wm-motion-distance-sm),0) scale(.985); filter:blur(3px) }
+  to { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0) }
+}
+@keyframes wmSurfaceOut {
+  from { opacity:1; transform:translate3d(0,0,0) scale(1) }
+  to { opacity:0; transform:translate3d(0,var(--wm-motion-distance-xs),0) scale(.99) }
+}
+@keyframes wmMenuIn {
+  from { opacity:0; transform:translate3d(0,-4px,0) scale(.975) }
+  to { opacity:1; transform:none }
+}
+@keyframes wmDrawerIn {
+  from { opacity:.3; transform:translate3d(18px,0,0) }
+  to { opacity:1; transform:translate3d(0,0,0) }
+}
+
+/* --- Loading, validation, and completion feedback --- */
+body[data-wm-surface] :where(button,[role="button"])[aria-busy="true"] {
+  cursor: progress;
+  overflow: hidden;
+  isolation: isolate;
+}
+body[data-wm-surface] :where(button,[role="button"])[aria-busy="true"]::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(105deg,transparent 20%,color-mix(in srgb,currentColor 10%,transparent) 44%,transparent 68%);
+  transform:translateX(-120%);
+  animation:wmBusySweep 1.15s ease-in-out infinite;
+}
+@keyframes wmBusySweep { to { transform:translateX(120%) } }
+body[data-wm-surface] :where(input,select,textarea,[role="combobox"])[aria-invalid="true"],
+body[data-wm-surface] :where(input,select,textarea).invalid {
+  animation:wmValidationPulse 360ms var(--wm-motion-ease-standard) 1;
+}
+@keyframes wmValidationPulse {
+  0%,100% { box-shadow:0 0 0 0 color-mix(in srgb,var(--motion-negative) 0%,transparent) }
+  48% { box-shadow:0 0 0 4px color-mix(in srgb,var(--motion-negative) 15%,transparent) }
+}
+body[data-wm-surface] :where(.toast,.toast-message,.notification-card,.data-banner,.auth-message,.wm-modal-error:not([hidden])) {
+  transition:opacity var(--wm-motion-duration-standard) ease,transform var(--wm-motion-duration-standard) var(--wm-motion-ease-enter),box-shadow var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface] :where(.toast,.toast-message,.notification-card):hover {
+  transform:translateY(-2px);
+}
+
+/* --- Repeated lists/tables: restrained, short state motion --- */
+body[data-wm-surface] :where(tbody > tr,.activity-item,.recent-list > article,.status-list > *) {
+  transition:background-color var(--wm-motion-duration-fast) ease,border-color var(--wm-motion-duration-fast) ease,box-shadow var(--wm-motion-duration-standard) ease,opacity var(--wm-motion-duration-fast) ease;
+}
+body[data-wm-surface] :where(tbody > tr):hover {
+  box-shadow:inset 3px 0 0 color-mix(in srgb,var(--wm-motion-accent,var(--motion-accent)) 42%,transparent);
+}
+body[data-wm-surface] :where(.empty-state,.empty,.overview-empty-mini,.command-empty) {
+  animation:wmEmptySettle var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter) both;
+}
+@keyframes wmEmptySettle {
+  from { opacity:0; transform:translateY(6px) }
+  to { opacity:1; transform:none }
+}
+
+/* --- Forms and controls --- */
+body[data-wm-surface] :where(input,select,textarea,.modern-select-trigger,.global-search,.app-search,.search-box) {
+  background-clip:padding-box;
+}
+body[data-wm-surface] :where(label,.field) > :where(span,strong):first-child {
+  transition:color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) ease;
+}
+body[data-wm-surface] :where(label,.field):focus-within > :where(span,strong):first-child {
+  color:var(--wm-motion-accent,var(--motion-accent));
+}
+body[data-wm-surface] :where(input,select,textarea,.modern-select-trigger):focus-visible {
+  transition-duration:var(--wm-motion-duration-fast);
+}
+body[data-wm-surface] select:not([multiple]) {
+  appearance:none;
+  -webkit-appearance:none;
+  padding-inline-end:max(2.25rem,calc(var(--wm-space-300,12px) + 1.35rem));
+  background-image:
+    linear-gradient(45deg,transparent 50%,currentColor 50%),
+    linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:
+    calc(100% - 16px) calc(50% - 2px),
+    calc(100% - 11px) calc(50% - 2px);
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+}
+body[data-wm-surface] select:not([multiple]):disabled {
+  cursor:not-allowed;
+  background-image:none;
+}
+
+/* ================================================================
+   Work Management shell — persistent chrome + content-focused motion
+   ================================================================ */
+body[data-wm-surface="shell"] .shell,
+body[data-wm-surface="shell"] .sidebar,
+body[data-wm-surface="shell"] .workspace,
+body[data-wm-surface="shell"] .topbar {
+  transform:none !important;
+  animation:none !important;
+}
+body[data-wm-surface="shell"] .workspace {
+  min-height:100vh;
+  background:
+    linear-gradient(90deg,transparent 0,transparent 92%,color-mix(in srgb,var(--motion-accent-2) 2%,transparent)),
+    transparent;
+}
+body[data-wm-surface="shell"] .topbar {
+  background:color-mix(in srgb,var(--motion-surface-strong) 88%,transparent) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  box-shadow:0 10px 34px rgba(31,42,68,.07),inset 0 1px rgba(255,255,255,.46) !important;
+  transition:none !important;
+  contain:layout paint;
+}
+body[data-wm-surface="shell"] [data-shell-nav] .nav-item::before { display:none; }
+body[data-wm-surface="shell"] [data-shell-nav].wm-motion-nav[data-wm-indicator-mode="vertical"] .wm-motion-indicator {
+  left:2px;
+  width:3px !important;
+  border-radius:999px;
+  box-shadow:0 0 18px rgba(108,124,255,.34);
+}
+body[data-wm-surface="shell"] .nav-item {
+  transform:none;
+}
+body[data-wm-surface="shell"] .nav-item:hover { transform:translateX(2px); }
+body[data-wm-surface="shell"] .nav-item.active {
+  background:linear-gradient(90deg,rgba(108,124,255,.15),rgba(255,255,255,.045));
+}
+body[data-wm-surface="shell"] .page {
+  container-type:inline-size;
+}
+body[data-wm-surface="shell"] :where(.app-toolbar,.board-list-toolbar,.board-controls,.user-toolbar) {
+  position:relative;
+  overflow:clip;
+}
+body[data-wm-surface="shell"] :where(.primary-btn,.secondary-btn,.danger-btn,.filter-chip,.theme-chip,.icon-btn) {
+  min-height:38px;
+  box-shadow:0 1px 2px rgba(31,42,68,.04);
+}
+body[data-wm-surface="shell"] :where(.primary-btn,.secondary-btn,.filter-chip,.theme-chip):hover:not(:disabled) {
+  transform:translateY(var(--wm-motion-hover-lift));
+  box-shadow:0 10px 24px rgba(31,42,68,.10);
+}
+body[data-wm-surface="shell"] .module-card {
+  transition:
+    transform var(--wm-motion-duration-standard) var(--wm-motion-ease-emphasized),
+    box-shadow var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter),
+    border-color var(--wm-motion-duration-standard) ease,
+    background-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="shell"] .module-card:hover,
+body[data-wm-surface="shell"] .module-card:focus-visible {
+  transform:perspective(1000px) translateY(-6px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));
+}
+body[data-wm-surface="shell"] .module-card .card-arrow {
+  transition:transform var(--wm-motion-duration-standard) var(--wm-motion-ease-emphasized),background-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="shell"] .module-card:hover .card-arrow { transform:translateX(3px) rotate(-2deg); }
+
+/* Command palette: contextual origin, selection motion, no layout jumps. */
+body[data-wm-surface="shell"] .command-backdrop {
+  background:rgba(8,13,24,.36);
+  backdrop-filter:blur(8px) saturate(110%);
+  -webkit-backdrop-filter:blur(8px) saturate(110%);
+}
+body[data-wm-surface="shell"] .command-dialog {
+  border-radius:24px;
+  box-shadow:0 32px 100px rgba(8,13,24,.28);
+}
+body[data-wm-surface="shell"] .command-result {
+  transition:background-color var(--wm-motion-duration-fast) ease,color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter);
+}
+body[data-wm-surface="shell"] .command-result.selected { transform:translateX(3px); }
+
+/* Boards: stronger hierarchy + drag/drop movement feedback. */
+body[data-wm-surface="shell"] :where(.board-card,.board-group,.kanban-column,.item-panel,.board-table-scroll) {
+  transition:border-color var(--wm-motion-duration-standard) ease,box-shadow var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter),background-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="shell"] .board-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 20px 46px rgba(31,42,68,.13);
+}
+body[data-wm-surface="shell"] .kanban-card {
+  transition:transform var(--wm-motion-duration-fast) var(--wm-motion-ease-emphasized),box-shadow var(--wm-motion-duration-standard) ease,border-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="shell"] .kanban-card:hover { transform:translateY(-3px) rotate(-.25deg); }
+body[data-wm-surface="shell"] :where([data-drop-status].is-drag-over,[data-drop-group].is-drag-over,.kanban-column.drag-over) {
+  border-color:color-mix(in srgb,var(--motion-accent-2) 48%,var(--motion-border)) !important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--motion-accent-2) 12%,transparent),0 16px 34px rgba(31,42,68,.10);
+}
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav .wm-motion-indicator,
+body[data-wm-surface="shell"] .board-tabs.wm-motion-nav .wm-motion-indicator {
+  background:linear-gradient(90deg,var(--motion-accent),var(--motion-accent-2));
+}
+body[data-wm-surface="shell"] .wm-modal-backdrop {
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+body[data-wm-surface="shell"] .wm-modal {
+  border-radius:24px;
+  box-shadow:0 36px 110px rgba(10,15,26,.26);
+}
+
+/* ================================================================
+   TimeTracker — persistent application chrome + kinetic attendance surfaces
+   ================================================================ */
+body[data-wm-surface="time-tracker"] .app-shell > .topbar {
+  position:sticky;
+  top:18px;
+  z-index:40;
+  transform:none !important;
+  animation:none !important;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(22px) saturate(135%);
+  -webkit-backdrop-filter:blur(22px) saturate(135%);
+  box-shadow:0 16px 44px rgba(31,42,68,.08),inset 0 1px rgba(255,255,255,.75);
+}
+body[data-wm-surface="time-tracker"] .nav-tabs.wm-motion-nav .wm-motion-indicator,
+body[data-wm-surface="time-tracker"] .overview-record-tabs.wm-motion-nav .wm-motion-indicator {
+  background:linear-gradient(90deg,#ff7045,#ff9b73);
+  box-shadow:0 6px 16px rgba(255,112,69,.18);
+}
+body[data-wm-surface="time-tracker"] .nav-tabs button {
+  transition:color var(--wm-motion-duration-fast) ease,background-color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter);
+}
+body[data-wm-surface="time-tracker"] .nav-tabs button:hover:not(.active) { transform:translateY(-1px); }
+body[data-wm-surface="time-tracker"] .clock-card,
+body[data-wm-surface="time-tracker"] .side-panel,
+body[data-wm-surface="time-tracker"] .overview-panel,
+body[data-wm-surface="time-tracker"] .overview-section,
+body[data-wm-surface="time-tracker"] .report-card,
+body[data-wm-surface="time-tracker"] .calendar-card,
+body[data-wm-surface="time-tracker"] .rbac-panel,
+body[data-wm-surface="time-tracker"] .ot-card {
+  box-shadow:0 16px 42px rgba(31,42,68,.07);
+}
+body[data-wm-surface="time-tracker"] :where(.overview-lane,.department-cell,.role-card,.rbac-user,.calendar-day) {
+  transition:transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter),box-shadow var(--wm-motion-duration-standard) ease,border-color var(--wm-motion-duration-standard) ease,background-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="time-tracker"] :where(.overview-lane,.department-cell,.role-card,.rbac-user):hover { transform:translateY(-2px); }
+body[data-wm-surface="time-tracker"] .calendar-day:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(31,42,68,.07); }
+body[data-wm-surface="time-tracker"] .modern-select-menu {
+  border-radius:16px;
+  box-shadow:0 24px 60px rgba(31,42,68,.16);
+}
+body[data-wm-surface="time-tracker"] .modern-select-option {
+  transition:background-color var(--wm-motion-duration-fast) ease,color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter);
+}
+body[data-wm-surface="time-tracker"] .modern-select-option:hover,
+body[data-wm-surface="time-tracker"] .modern-select-option:focus-visible { transform:translateX(2px); }
+body[data-wm-surface="time-tracker"] .clock-btn:not(:disabled):hover { transform:translateY(-3px); }
+body[data-wm-surface="time-tracker"] .clock-btn:not(:disabled):active { transform:translateY(1px) scale(var(--wm-motion-press-scale)); }
+body[data-wm-surface="time-tracker"] .clock-face.running .orbit-a { animation-duration:9s; }
+body[data-wm-surface="time-tracker"] .clock-face.running .orbit-b { animation-duration:13s; }
+body[data-wm-surface="time-tracker"] .modal-backdrop {
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+
+/* ================================================================
+   FuelTrack+ — theme-aware operational motion
+   ================================================================ */
+body[data-wm-surface="fueltrack"] .sidebar,
+body[data-wm-surface="fueltrack"] .topbar {
+  transform:none !important;
+  animation:none !important;
+}
+body[data-wm-surface="fueltrack"] .nav-list.wm-motion-nav[data-wm-indicator-mode="vertical"] .wm-motion-indicator {
+  left:0;
+  width:3px !important;
+  background:linear-gradient(180deg,var(--accent),var(--blue));
+  box-shadow:0 0 18px color-mix(in srgb,var(--accent) 28%,transparent);
+}
+body[data-wm-surface="fueltrack"] .nav-item {
+  transition:background-color var(--wm-motion-duration-fast) ease,color var(--wm-motion-duration-fast) ease,border-color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter);
+}
+body[data-wm-surface="fueltrack"] .nav-item:hover:not(.active) { transform:translateX(2px); }
+body[data-wm-surface="fueltrack"] #content.route-enter > :where(.page-head,.kpi-grid,.panel,.form-card,.request-filter-panel):first-child {
+  animation:wmFuelContentIn var(--wm-motion-duration-deliberate) var(--wm-motion-ease-enter) both;
+}
+@keyframes wmFuelContentIn { from { opacity:.55; transform:translateY(7px) } to { opacity:1; transform:none } }
+body[data-wm-surface="fueltrack"] :where(.kpi-card,.primary-metric-card,.panel,.request-card,.approval-card,.lightfuel-card) {
+  transition:transform var(--wm-motion-duration-standard) var(--wm-motion-ease-enter),box-shadow var(--wm-motion-duration-standard) ease,border-color var(--wm-motion-duration-standard) ease,background-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="fueltrack"] :where(.request-card,.approval-card,.lightfuel-card):hover { transform:translateY(-2px); }
+body[data-wm-surface="fueltrack"] .button:not(:disabled):hover { transform:translateY(-2px); }
+body[data-wm-surface="fueltrack"] .button:not(:disabled):active { transform:translateY(1px) scale(var(--wm-motion-press-scale)); }
+body[data-wm-surface="fueltrack"] dialog::backdrop {
+  background:rgba(4,10,20,.48);
+  backdrop-filter:blur(7px);
+}
+body[data-wm-surface="fueltrack"] .app-dialog[open] { border-radius:24px; }
+body[data-wm-surface="fueltrack"] .sidebar-backdrop:not([aria-hidden="true"]) { animation:wmOverlayIn var(--wm-motion-duration-standard) ease both; }
+
+/* ================================================================
+   TradeLink — persistent document chrome + document-state choreography
+   ================================================================ */
+body[data-wm-surface="tradelink"] .app-shell > .topbar {
+  position:sticky;
+  top:12px;
+  z-index:60;
+  transform:none !important;
+  animation:none !important;
+  background:rgba(255,255,255,.90);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:0 14px 40px rgba(31,42,68,.07);
+}
+body[data-wm-surface="tradelink"] .nav-tabs.wm-motion-nav .wm-motion-indicator,
+body[data-wm-surface="tradelink"] .create-type-tabs.wm-motion-nav .wm-motion-indicator,
+body[data-wm-surface="tradelink"] .recovery-tabs.wm-motion-nav .wm-motion-indicator {
+  background:linear-gradient(90deg,var(--brand),#12aa91);
+  box-shadow:0 5px 15px rgba(65,105,245,.17);
+}
+body[data-wm-surface="tradelink"] :where(.nav-tabs button,.create-type-tabs button,.recovery-tabs button) {
+  transition:color var(--wm-motion-duration-fast) ease,background-color var(--wm-motion-duration-fast) ease,transform var(--wm-motion-duration-fast) var(--wm-motion-ease-enter),box-shadow var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="tradelink"] :where(.nav-tabs button,.create-type-tabs button,.recovery-tabs button):hover:not(.active) { transform:translateY(-1px); }
+body[data-wm-surface="tradelink"] :where(.form-section,.section-card,.template-card,.manual-card,.snapshot-card,.documents-filter-panel,.documents-commandbar) {
+  transition:transform var(--wm-motion-duration-standard) var(--wm-motion-ease-enter),box-shadow var(--wm-motion-duration-standard) ease,border-color var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="tradelink"] :where(.template-card,.snapshot-card,.approval-card):hover { transform:translateY(-2px); }
+body[data-wm-surface="tradelink"] .document-menu-trigger:hover { transform:rotate(4deg) scale(1.04); }
+body[data-wm-surface="tradelink"] .company-panel {
+  box-shadow:-22px 0 70px rgba(31,42,68,.16);
+}
+body[data-wm-surface="tradelink"] .quotation-item-row,
+body[data-wm-surface="tradelink"] .packing-item-row {
+  transition:background-color var(--wm-motion-duration-fast) ease,border-color var(--wm-motion-duration-fast) ease,box-shadow var(--wm-motion-duration-standard) ease;
+}
+body[data-wm-surface="tradelink"] .quotation-item-row:focus-within,
+body[data-wm-surface="tradelink"] .packing-item-row:focus-within {
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 10%,transparent);
+}
+body[data-wm-surface="tradelink"] .modal-backdrop { backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); }
+
+/* --- Responsive choreography: shorter travel on smaller/coarse interfaces --- */
+@media(max-width:900px),(pointer:coarse) {
+  :root {
+    --wm-motion-distance-sm:6px;
+    --wm-motion-distance-md:10px;
+    --wm-motion-distance-lg:14px;
+    --wm-motion-hover-lift:-2px;
+  }
+  body[data-wm-surface] :where(.module-card,.board-card,.request-card,.approval-card,.template-card,.snapshot-card):hover {
+    transform:none;
+  }
+  body[data-wm-surface="time-tracker"] .app-shell > .topbar,
+  body[data-wm-surface="tradelink"] .app-shell > .topbar { top:8px; }
+}
+
+/* --- Motion accessibility: retain feedback without non-essential travel --- */
+@media(prefers-reduced-motion:reduce) {
+  :root {
+    --wm-motion-duration-micro:1ms;
+    --wm-motion-duration-fast:1ms;
+    --wm-motion-duration-standard:1ms;
+    --wm-motion-duration-deliberate:1ms;
+    --wm-motion-duration-view:1ms;
+    --wm-motion-duration-expressive:1ms;
+    --motion-fast:1ms;
+    --motion-medium:1ms;
+    --motion-slow:1ms;
+  }
+  body[data-wm-surface] *,
+  body[data-wm-surface] *::before,
+  body[data-wm-surface] *::after {
+    scroll-behavior:auto !important;
+  }
+  body[data-wm-surface] :where([data-wm-motion-overlay="1"],[data-wm-motion-surface="1"],dialog[open],.modern-select-menu,.context-menu,.context-menu-pop,.column-context-menu,.company-panel,.item-panel,.empty-state,.empty,.overview-empty-mini) {
+    animation:none !important;
+    transform:none !important;
+    filter:none !important;
+  }
+  body[data-wm-surface] .wm-motion-indicator {
+    transition:none !important;
+    box-shadow:none !important;
+  }
+  body[data-wm-surface] :where(.module-card,.board-card,.kanban-card,.clock-btn,.button,.primary-btn,.secondary-btn,.nav-item,.calendar-day,.role-card):hover {
+    transform:none !important;
+  }
+  body[data-wm-surface] :where(button,[role="button"])[aria-busy="true"]::before { animation:none !important; display:none; }
+  body[data-wm-surface="time-tracker"] .clock-face.running :where(.orbit-a,.orbit-b) { animation:none !important; }
+}
+
+/* v1.31.0 — interactive board motion refinements */
+body[data-wm-surface="shell"] .board-selection-bar{animation:wmMotionRise var(--motion-standard) var(--motion-ease-enter) both}
+body[data-wm-surface="shell"] .board-item-row.is-selected{transition:background-color var(--motion-fast) ease,box-shadow var(--motion-fast) ease}
+body[data-wm-surface="shell"] .board-inline-popover,
+body[data-wm-surface="shell"] .column-quick-picker{transform-origin:top left;animation:wmMotionMenuIn var(--motion-fast) var(--motion-ease-enter) both}
+body[data-wm-surface="shell"] .inline-add-row:focus-within{background:color-mix(in srgb,var(--motion-accent-2) 4%,var(--motion-surface-strong))}
+@media(prefers-reduced-motion:reduce){body[data-wm-surface="shell"] .board-selection-bar,body[data-wm-surface="shell"] .board-inline-popover,body[data-wm-surface="shell"] .column-quick-picker{animation:none!important}}
+
+/* v1.32.0 — Board motion stabilization: static chrome, restrained workspace motion. */
+body[data-wm-surface="shell"] [data-wm-motion-static="true"] :where(.board-group,.board-item-row,.kanban-column,.kanban-card,.board-table-scroll){animation:none!important}
+body[data-wm-surface="shell"] [data-wm-motion-static="true"] :where(.board-group,.board-item-row){transform:none!important;transition:background-color var(--motion-fast) ease,box-shadow var(--motion-fast) ease!important}
+body[data-wm-surface="shell"] [data-wm-motion-static="true"] .kanban-card:hover{transform:translateY(-1px)!important;box-shadow:0 10px 24px rgba(31,42,68,.1)!important}
+body[data-wm-surface="shell"] .board-floating-menu{transform-origin:var(--board-menu-origin-x,50%) 0;animation:boardMenuIn var(--wm-motion-duration-standard) var(--wm-motion-ease-enter) both}
+
+/* v1.32.2 — Item Workspace collaboration motion: restrained, content-scoped feedback. */
+body[data-wm-surface="shell"] .item-update:hover{transform:translateY(-1px)}
+body[data-wm-surface="shell"] .item-update-prompts button:hover{transform:translateY(-1px)}
+body[data-wm-surface="shell"] .item-update-compose-shell{transform:none}
+body[data-wm-surface="shell"] .item-update-stream{transform:none}
+@media(prefers-reduced-motion:reduce){body[data-wm-surface="shell"] .item-update:hover,body[data-wm-surface="shell"] .item-update-prompts button:hover{transform:none!important}}
+
+/* v1.32.2 — Updates integration: stable, compact collaboration motion. */
+body[data-wm-surface="shell"] .item-update-compose-shell,
+body[data-wm-surface="shell"] .item-update-stream,
+body[data-wm-surface="shell"] .item-update-empty{transform:none!important}
+body[data-wm-surface="shell"] .item-update-prompts button:hover,
+body[data-wm-surface="shell"] .item-update:hover{transform:none!important}
+body[data-wm-surface="shell"] .item-update-prompts button:active,
+body[data-wm-surface="shell"] .item-update-submit:active{transform:scale(.985)!important}
+@media(prefers-reduced-motion:reduce){body[data-wm-surface="shell"] .item-update-prompts button:active,body[data-wm-surface="shell"] .item-update-submit:active{transform:none!important}}
+
+/* v1.32.3 — Item Workspace tabs use one inset indicator, separated from divider. */
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav .wm-motion-indicator{
+  top:auto;
+  bottom:3px;
+  width:max(16px,calc(var(--wm-ind-w,0px) - 20px));
+  height:2px;
+  transform:translate3d(calc(var(--wm-ind-x,0px) + 10px),0,0);
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--motion-accent),var(--motion-accent-2));
+  box-shadow:0 1px 5px color-mix(in srgb,var(--motion-accent) 18%,transparent);
+  transition:
+    transform var(--wm-motion-duration-standard) var(--wm-motion-ease-emphasized),
+    width var(--wm-motion-duration-standard) var(--wm-motion-ease-emphasized),
+    opacity var(--wm-motion-duration-fast) ease;
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav .wm-motion-indicator{transition:none!important}
+}
+
+/* v1.32.8 — keep the animated Item Workspace tab indicator aligned with the
+   enlarged primary-navigation hit areas and clear of the tablist divider. */
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav .wm-motion-indicator{
+  bottom:4px;
+  width:max(24px,calc(var(--wm-ind-w,0px) - 32px));
+  height:3px;
+  transform:translate3d(calc(var(--wm-ind-x,0px) + 16px),0,0);
+  border-radius:999px;
+}
+
+
+/* v1.32.10 — definitive Item Workspace primary-tab sizing.
+   Root-cause fix: motion-design.css loads after app.css and its shell-scoped
+   tablist rule previously won the cascade for parent padding. The label span
+   also inherited a legacy badge rule in app.css. The legacy selector is now
+   narrowed to count badges and this final cascade layer owns tab geometry. */
+body[data-wm-surface="shell"] .item-panel-tabs,
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav{
+  min-height:86px;
+  padding:8px 18px 0;
+  gap:8px;
+  align-items:stretch;
+  border-radius:16px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+}
+body[data-wm-surface="shell"] .item-panel-tabs::-webkit-scrollbar{display:none}
+body[data-wm-surface="shell"] .item-panel-tabs button,
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav button{
+  flex:1 1 0;
+  min-width:140px;
+  max-width:190px;
+  min-height:76px;
+  padding:16px 24px 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border-radius:13px 13px 0 0;
+  font-size:18px;
+  font-weight:820;
+  line-height:1.3;
+  letter-spacing:-.012em;
+  white-space:nowrap;
+  color:var(--board-muted-readable,var(--muted));
+}
+body[data-wm-surface="shell"] .item-panel-tabs button > span{
+  display:inline;
+  min-width:0;
+  width:auto;
+  height:auto;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  font-size:inherit;
+  font-weight:inherit;
+  line-height:inherit;
+  letter-spacing:inherit;
+}
+body[data-wm-surface="shell"] .item-panel-tabs button b{
+  min-width:30px;
+  height:30px;
+  padding:0 8px;
+  margin-left:0;
+  font-size:12px;
+  font-weight:850;
+  line-height:1;
+}
+body[data-wm-surface="shell"] .item-panel-tabs button:hover{
+  color:var(--ink);
+  background:color-mix(in srgb,var(--accent) 8%,var(--motion-surface-strong));
+}
+body[data-wm-surface="shell"] .item-panel-tabs button.active,
+body[data-wm-surface="shell"] .item-panel-tabs button[aria-selected="true"]{
+  color:var(--ink);
+  background:color-mix(in srgb,var(--accent) 7%,var(--motion-surface-strong));
+  box-shadow:0 5px 16px rgba(31,42,68,.08);
+}
+body[data-wm-surface="shell"] .item-panel-tabs button:focus-visible{
+  outline:3px solid color-mix(in srgb,var(--accent) 58%,transparent);
+  outline-offset:-5px;
+  color:var(--ink);
+}
+body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav .wm-motion-indicator{
+  bottom:5px;
+  width:max(34px,calc(var(--wm-ind-w,0px) - 44px));
+  height:4px;
+  transform:translate3d(calc(var(--wm-ind-x,0px) + 22px),0,0);
+  border-radius:999px;
+}
+@media(max-width:760px){
+  body[data-wm-surface="shell"] .item-panel-tabs,
+  body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav{min-height:80px;padding:7px 14px 0;gap:7px}
+  body[data-wm-surface="shell"] .item-panel-tabs button,
+  body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav button{
+    min-width:132px;max-width:176px;min-height:70px;padding:14px 20px 16px;font-size:17px
+  }
+}
+@media(max-width:520px){
+  body[data-wm-surface="shell"] .item-panel-tabs,
+  body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav{min-height:74px;padding:6px 10px 0;gap:6px}
+  body[data-wm-surface="shell"] .item-panel-tabs button,
+  body[data-wm-surface="shell"] .item-panel-tabs.wm-motion-nav button{
+    flex:0 0 auto;min-width:124px;max-width:none;min-height:66px;padding:12px 17px 14px;font-size:16px
+  }
+  body[data-wm-surface="shell"] .item-panel-tabs button b{min-width:27px;height:27px;font-size:11px}
+}
